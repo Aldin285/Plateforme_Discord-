@@ -1,3 +1,22 @@
 Audio :
     Avec MediaThemeTailwindAudio, pour ajouter une audio depuis notre librairie, 
     il faut mettre le fichier audio dans le dossier "public"
+
+Pour Transporter une variable d'une page à une autre (voir la page chat) :
+    on utilise searchParams.get pour récupérer la valuer importer.
+    Puis, on ajoute la valuer importer dans une string dans ${} ==> '<p>${valeurImporte}</p>'. 
+    Avec innerHTML, en ajoute la string dans une div 
+
+
+Grid tailwind css: 
+    Quand on veut appliquer une position sur touts les grids items ==> place-items-...
+    Quand on veut appliquer une position sur un grid item précis ==> place-self-...
+    Quand on veut appliquer une position sur un grid item précis avec des positions différentes sur les deux axes ==> justify-self-... pour l'axe horizontal && self-... pour l'axe vertical
+
+
+Fonctions que je veux ajouter : 
+    Icons et photos de profil
+    pouvoir changer l'arrière plan du chat     
+
+Tâches à faire :
+    Rendre les pages responsives quand la taille est réduite
