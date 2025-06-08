@@ -8,12 +8,31 @@ import { useSearchParams } from "next/navigation";
 
 import Header from '@/app/composants/header/page';
 
+// Pour le web socket
+import { useEffect } from 'react'
+import  io  from 'socket.io-client';
+const socket = io({path:"/api/socket_io"});
+
 const Chat:NextPage = () =>{
 
+    // Pour le web socket 
+    useEffect(() => {socketInitializer()}, [])
 
+  const socketInitializer = async () => {
+    await fetch('/api/socket')
+    
+
+    socket.on('connect', () => {
+      console.log('connected')
+    })
+
+     socket.on('update-input', msg => {
+      SetMessage(msg)
+    })
+
+  }
 
     const searchParams = useSearchParams();
-
     const [Message,SetMessage] = useState('')
     
 
@@ -81,7 +100,7 @@ const Chat:NextPage = () =>{
 
             <div className=" col-start-2 row-start-2 flex flex-row items-center justify-self-center self-start ">
              {/* <p>Your username is : {searchParams.get("nomUser")}</p> */}
-                <input onChange={(e)=>SetMessage(e.target.value)} className="bg-cyan-100 text-black p-1 rounded-2xl" name="Message" id="Message" placeholder="message..." value={Message}/>
+                <input onChange={(e)=>{SetMessage(e.target.value);socket.emit('input-change', e.target.value)}} className="bg-cyan-100 text-black p-1 rounded-2xl" name="Message" id="Message" placeholder="message..." value={Message}/>
                 <br/>
                 
                 <button onClick={AjoutText} className="bg-blue-300 hover:bg-blue-400 text-black border-solid rounded-3xl p-2">Send</button>

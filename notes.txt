@@ -20,3 +20,7 @@ Fonctions que je veux ajouter :
 
 Tâches à faire :
     Rendre les pages responsives quand la taille est réduite
+
+Lien pour le tuto Socket.io :
+https://blog.logrocket.com/implementing-websocket-communication-next-js/
+
