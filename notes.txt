@@ -24,3 +24,5 @@ Tâches à faire :
 Lien pour le tuto Socket.io :
 https://blog.logrocket.com/implementing-websocket-communication-next-js/
 
+Quand on veut avoir la valeur d'une variable dont la valeur contient .getElementById("") :
+    On utilise HTMLInputElement ==> (document.getElementById(elementId) as HTMLInputElement).value

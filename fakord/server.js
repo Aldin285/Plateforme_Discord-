@@ -1,29 +1,41 @@
-const { createServer } = require('http');
-const { parse } = require('url');
-const next = require('next');
-const { Server } = require("socket.io");
+import { createServer } from "node:http";
+import next from "next";
+import { Server } from "socket.io";
 
-const app = next({ dev: process.env.NODE_ENV !== 'production' });
-const handle = app.getRequestHandler();
+const dev = process.env.NODE_ENV !== "production";
+const hostname = "localhost";
+const port = 3000;
+// when using middleware `hostname` and `port` must be provided below
+const app = next({ dev, hostname, port });
+const handler = app.getRequestHandler();
 
 app.prepare().then(() => {
-  const server = createServer((req, res) => {
-    const parsedUrl = parse(req.url, true);
-    handle(req, res, parsedUrl);
-  });
+  const httpServer = createServer(handler);
 
-  const io = new Server(server);
+  const io = new Server(httpServer, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
+});
 
-  io.on('connection', socket => {
-    console.log('Client connected');
 
-    socket.on('disconnect', () => {
-      console.log('Client disconnected');
+  io.on("connection", (socket) => {
+    console.log(`User ID : ${socket.id}`);
+
+    // Page chat
+    socket.on("message", (msg) => {
+      console.log("Message envoyé sur le serveur:", msg);
+      io.emit("message", msg);
     });
   });
 
-  server.listen(3000, (err) => {
-    if (err) throw err;
-    console.log('> Ready on http://localhost:3000');
-  });
+  httpServer
+    .once("error", (err) => {
+      console.error(err);
+      process.exit(1);
+    })
+    .listen(port, () => {
+      console.log(`> Ready on http://${hostname}:${port}`);
+    });
 });
