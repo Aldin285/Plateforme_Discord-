@@ -16,10 +16,14 @@ Grid tailwind css:
 
 Fonctions que je veux ajouter : 
     Icons et photos de profil
-    pouvoir changer l'arrière plan du chat     
+    pouvoir changer l'arrière plan du chatbox    
 
 Tâches à faire :
-    Rendre les pages responsives quand la taille est réduite
+    Rendre le chatbox responsives quand la taille est réduite
+    Voir les users connectés 
+    Ajouter des chat room (salons) 
+    Faire fonctionner le bouton du header quand la taille de la page est réduite
+
 
 Lien pour le tuto Socket.io :
 https://blog.logrocket.com/implementing-websocket-communication-next-js/

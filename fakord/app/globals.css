@@ -25,12 +25,13 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-.message {
+.myMessage {
   word-break: break-all;
   padding: 0.25rem; 
   width: 20rem; 
-  place-self: start;
+  place-self: end;
   border-radius: 0.4rem;
+   width: auto;
 
   background-image: linear-gradient(
     to right,
@@ -40,7 +41,23 @@ body {
   );
 }
 
-.message_user {
+.othersMessage {
+  word-break: break-all;
+  padding: 0.25rem; 
+  width: 20rem; 
+  place-self: start;
+  border-radius: 0.4rem;
+  width: auto;
+
+  background-image: linear-gradient(
+    to right,
+    #6366f1 10%,   /* indigo-500 */
+    #3b82f6 40%,   /* blue-500 */
+    #075985 80%    /* sky-800 */
+  );
+}
+
+/* .message_user {
   word-break: break-all;
   padding: 0.25rem; 
   border-width: 2px;
@@ -48,7 +65,7 @@ body {
   width: 20rem; 
   place-self: end;
   
-}
+} */
 
 .end{
   place-self: end;

@@ -6,7 +6,7 @@ export default function Header() {
             <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
                {/* côté icone gauche  */}
                 <p className="flex items-center">
-                    <img src="/pics/dancingTetoPear.gif" className="mr-3 h-6 sm:h-9" alt="Flowbite Logo" />
+                    <img src="/pics/dancingTetoPear.gif" className="mr-3 h-6 sm:h-9" alt=" Teto Pear" />
                     <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">Fakord</span>
                 </p>
                 <div className="flex items-center lg:order-2">

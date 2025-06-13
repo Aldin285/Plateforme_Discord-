@@ -24,9 +24,9 @@ app.prepare().then(() => {
     console.log(`User ID : ${socket.id}`);
 
     // Page chat
-    socket.on("message", (msg) => {
-      console.log("Message envoyé sur le serveur:", msg);
-      io.emit("message", msg);
+    socket.on("message", (msg,user) => {
+      console.log("Message envoyé par "+user +":"+msg);
+      io.emit("message", msg,user);
     });
   });
 
