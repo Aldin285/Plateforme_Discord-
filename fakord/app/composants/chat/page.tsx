@@ -11,55 +11,110 @@ export default function ChatRoom() {
     const searchParams = useSearchParams();
     const [Message,SetMessage] = useState('')
     const username = searchParams.get("nomUser")
+
+    // const [currentUsername,SetcurrentUsername] = useState('')
     
         // Pour le web socket 
          useEffect(() => {
+           
+            socket.on('username',(userConnected)=>{
+                // Test (le nom ne se met pas à jour)
+                // SetcurrentUsername(userConnected) 
+                // console.log(`New User 2.0 : ${currentUsername}`)
+
+                console.log(`New User : ${userConnected}`)
+            
+                const br = document.createElement("br");
+
+                const connectedUsername = document.createElement("li")
+                const connectedUser = document.createTextNode(userConnected)
+                connectedUsername.appendChild(connectedUser)
+
+                const listeUser= document.getElementById("ConnectedUsers")
+                listeUser?.appendChild(connectedUsername)
+            })
         
             socket.on('message', (msg,senderUsername) => {
-            // Pour tester si le message est envoyé vers le serveur socket
-            console.log("Message sent by ", senderUsername,":", msg);
+                // Pour tester si le message est envoyé vers le serveur socket
+                console.log("Message sent by ", senderUsername,":", msg);
 
-            const br = document.createElement("br");
-        
-            const message = document.createElement("div");
-            if ( senderUsername==username){
-                message.classList.add("end");
-            }
+                const br = document.createElement("br");
             
-        
-              // Partie message
-            const message_box = document.createElement("li");
-            if ( senderUsername==username){
-                 message_box.classList.add("myMessage");
-            }else{
-                message_box.classList.add("othersMessage");
-            }
-           
-            const message_text = document.createTextNode(msg);
-        
-            message_box.appendChild(message_text);
+                const message = document.createElement("div");
+                if ( senderUsername==username){
+                    message.classList.add("end");
+                }
+                
             
-            // Partie user
-            const nom_user_box = document.createElement("div");
-            nom_user_box.innerHTML = `<p>${senderUsername}</p>`;
+                // Partie message
+                const message_box = document.createElement("li");
+                if ( senderUsername==username){
+                    message_box.classList.add("myMessage");
+                }else{
+                    message_box.classList.add("othersMessage");
+                }
             
-            // Partie messagerie
-            const messagerie = document.getElementById("Messagerie");
-            message.appendChild(nom_user_box);
-            message.appendChild(message_box);
-            message.appendChild(br);
-        
-            messagerie?.appendChild(message);
+                const message_text = document.createTextNode(msg);
+            
+                message_box.appendChild(message_text);
+                
+                // Partie user
+                const nom_user_box = document.createElement("div");
+                nom_user_box.innerHTML = `<p>${senderUsername}</p>`;
+                
+                // Partie messagerie
+                const messagerie = document.getElementById("Messagerie");
+                message.appendChild(nom_user_box);
+                message.appendChild(message_box);
+                message.appendChild(br);
+            
+                messagerie?.appendChild(message);
+        });
+
+         socket.on('historique', (historique) => {
+
+                const br = document.createElement("br");
+                for (const m of historique){
+                
+                    const message = document.createElement("div");
+                    if ( m.expediteur==username){
+                        message.classList.add("end");
+                    }
+                    
+                
+                    // Partie message
+                    const message_box = document.createElement("li");
+                    if ( m.expediteur==username){
+                        message_box.classList.add("myMessage");
+                    }else{
+                        message_box.classList.add("othersMessage");
+                    }
+                
+                    const message_text = document.createTextNode(m.contenue);
+                
+                    message_box.appendChild(message_text);
+                    
+                    // Partie user
+                    const nom_user_box = document.createElement("div");
+                    nom_user_box.innerHTML = `<p>${ m.expediteur}</p>`;
+                    
+                    // Partie messagerie
+                    const messagerie = document.getElementById("Messagerie");
+                    message.appendChild(nom_user_box);
+                    message.appendChild(message_box);
+                    message.appendChild(br);
+                
+                    messagerie?.appendChild(message);
+                }
         });
         
         return () => {
-            // pour éviter les fuites de données
-            socket.off('connect');
+            // pour éviter les fuites de données et éviter de répéter une action deux fois ou plus (ajouter de le nom d'un user connecté)
             socket.off('message');
+            socket.off('username');
+            socket.off('historique');
         };
-        }, [searchParams]);
-    
-        
+        }, []);
     
         const sendMessage =()=>{
             // Crée un broadcast pour envoyer le message à tout les users connectés
@@ -71,12 +126,13 @@ export default function ChatRoom() {
             <>
             <div className='grid grid-cols-4 grid-rows-[500px_100px] gap-4 bg-linear-to-r from-cyan-900 to-blue-900 p-3 '>
                
+               {/* Partie Chat Box */}
                <p className="col-start-2 col-end-4 row-start-1 row-end-2 flex flex-col items-center">Nom Salon</p>
                
                {/* Il faut rendre la box du chat responsive pour éviter le défilement horizontal */}
-                <div className="  col-start-2 col-end-4 row-start-1 row-end-2 flex flex-col items-center overflow-y-auto scrollbar-hide ">
+                <div className="  col-start-2 col-end-4 row-start-1 row-end-2 flex flex-col items-center bg-cover overflow-y-auto scrollbar-hide ">
                    <br/> 
-                    <ul className="list-none  border-amber-100 rounded-4xl border-2 w-md p-3  bg-blue-300" id="Messagerie">
+                    <ul className="list-none  border-amber-100 rounded-4xl border-2 w-md size-lvw p-3  bg-blue-300" id="Messagerie">
                         {/* break-all sert à faire un saut de ligne quand un mot est trop long pour le cadre définit */}
                         <div className='end' >
                         <p>nomUser1</p>
@@ -85,15 +141,29 @@ export default function ChatRoom() {
                         </div>  <br/>
                     </ul>  
                 </div>
-    
+
+                <p className="col-start-4 col-end-5 row-start-1 row-end-2 flex flex-col items-center">Users Connectés</p>
+               
+               {/* Partie users connectés */}
+               <div className="col-start-4 col-end-5 row-start-1 row-end-2 flex flex-col items-center bg-cover  ">
+                   <br/> 
+                    <ul className="list-none  border-amber-100 rounded-4xl border-2 w-50 p-3  bg-blue-300" id="ConnectedUsers">
+                        
+                        <li className="">test 1</li>
+                        <br/>
+                        
+                    </ul>  
+                </div>
+            
+                {/* Partie saisie message */}
                 <div className=" col-start-2 col-end-4 row-start-2 flex flex-row items-center justify-self-center self-start ">
                  {/* <p>Your username is : {searchParams.get("nomUser")}</p> */}
                     <input onChange={(e)=>{SetMessage(e.target.value)}
                        } className="bg-cyan-100 text-black p-1 rounded-2xl" name="Message" id="Message" placeholder="message..." value={Message}/>
                     <br/>
                     
-                    <button onClick={sendMessage} className="bg-blue-300 hover:bg-blue-400 text-black border-solid rounded-3xl p-2">Send</button>
-                   
+                    <button onClick={sendMessage} className="bg-blue-300 hover:bg-blue-400 text-black border-solid rounded-3xl p-2" >Send</button>
+                    
                 </div>
     
             </div>  

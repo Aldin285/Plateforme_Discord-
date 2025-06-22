@@ -1,11 +1,19 @@
 'use client'
 import Form from 'next/form'
 import MediaThemeTailwindAudio from "player.style/tailwind-audio/react"
-
+import { useState } from 'react'
+import {socket} from "../../../socket"
 // import { url } from "inspector"
 // import Link from "next/link"
 
 export default function Login() {
+
+ const [onlineUsername,SetOnlineUsername] = useState('')
+
+  const SendUsername =()=>{
+    socket.emit('username',onlineUsername)
+    console.log("TEST")
+  }
      return (
       <>
     
@@ -17,11 +25,11 @@ export default function Login() {
           <Form action="/pages/chat" className=" shadow-md rounded px-8 pt-6 pb-8 mb-4 ">
             <h1>Username</h1>
             <br/>
-              <input className="bg-cyan-100 text-black field-sizing-content w-auto object-contain p-3 rounded-2xl" name="nomUser" placeholder='username...'/>
+              <input onChange={(e)=>{SetOnlineUsername(e.target.value)}} className="bg-cyan-100 text-black field-sizing-content w-auto object-contain p-3 rounded-2xl" name="nomUser" placeholder='username...'/>
           
               <br/>
               <br/>
-              <button type="submit" className="bg-green-300 hover:bg-green-400 text-black border-solid rounded-3xl p-2">Let's chat</button>
+              <button onClick={SendUsername} type="submit" className="bg-green-300 hover:bg-green-400 text-black border-solid rounded-3xl p-2">Let's chat</button>
             </Form>
           </div>
     
