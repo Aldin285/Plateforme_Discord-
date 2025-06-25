@@ -35,3 +35,7 @@ https://blog.logrocket.com/implementing-websocket-communication-next-js/
 
 Quand on veut avoir la valeur d'une variable dont la valeur contient .getElementById("") :
     On utilise HTMLInputElement ==> (document.getElementById(elementId) as HTMLInputElement).value
+
+Comment avoir une variable partagée ou unique dans le web socket : 
+    Si on veut que la variable soit partagé, on l'a met en dehors de io.on("connection")
+    Si on veut que la variable soit unique pour chaque user connecté , on l'a met dans io.on("connection")

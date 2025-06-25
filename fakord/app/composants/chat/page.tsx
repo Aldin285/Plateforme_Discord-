@@ -7,31 +7,41 @@ import { useSearchParams } from "next/navigation";
 
 import {socket} from "../../../socket"
 
+
+
 export default function ChatRoom() {
     const searchParams = useSearchParams();
     const [Message,SetMessage] = useState('')
     const username = searchParams.get("nomUser")
-
+   
     // const [currentUsername,SetcurrentUsername] = useState('')
     
         // Pour le web socket 
          useEffect(() => {
            
-            socket.on('username',(userConnected)=>{
-                // Test (le nom ne se met pas à jour)
-                // SetcurrentUsername(userConnected) 
-                // console.log(`New User 2.0 : ${currentUsername}`)
-
-                console.log(`New User : ${userConnected}`)
+            socket.on('onlineUsers',(connectedUsers,oldConnectedUsers)=>{
+        
+                console.log(`Users connectés : ${connectedUsers}`)
             
                 const br = document.createElement("br");
-
-                const connectedUsername = document.createElement("li")
-                const connectedUser = document.createTextNode(userConnected)
-                connectedUsername.appendChild(connectedUser)
-
                 const listeUser= document.getElementById("ConnectedUsers")
-                listeUser?.appendChild(connectedUsername)
+                // Supprime tout les noms users dans la liste pour éviter la répétition
+                for (const u of oldConnectedUsers){
+                        // console.log(`User ${count} deleted: ${u}`)
+                        const el = document.getElementById(u)
+                        el?.remove()
+                }
+
+                for (const u of connectedUsers){
+                        // console.log(`User ${count} added: ${u}`)
+                        const connectedUsername = document.createElement("li")
+                        connectedUsername.id =u 
+                        const connectedUser = document.createTextNode(u)
+                        connectedUsername.appendChild(connectedUser)
+                        listeUser?.appendChild(connectedUsername)
+                       
+                }
+                
             })
         
             socket.on('message', (msg,senderUsername) => {
@@ -74,6 +84,11 @@ export default function ChatRoom() {
          socket.on('historique', (historique) => {
 
                 const br = document.createElement("br");
+                const messagerie = document.getElementById("Messagerie");
+                    if ( messagerie){
+                        messagerie.innerHTML=""
+                    }
+                    
                 for (const m of historique){
                 
                     const message = document.createElement("div");
@@ -99,7 +114,7 @@ export default function ChatRoom() {
                     nom_user_box.innerHTML = `<p>${ m.expediteur}</p>`;
                     
                     // Partie messagerie
-                    const messagerie = document.getElementById("Messagerie");
+                    
                     message.appendChild(nom_user_box);
                     message.appendChild(message_box);
                     message.appendChild(br);

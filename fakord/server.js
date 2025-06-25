@@ -19,43 +19,75 @@ app.prepare().then(() => {
     methods: ["GET", "POST"]
   }
 });
+
+
   // Pour stocker les messages envoyés 
   // ne pas mettre cette variable dans le io.on("connection") sinon chaque utilisateur aura son propre historique
   const historique = []
+  let connectedUsers = []
+  
+  let oldConnectedUsers
+
+
 
   io.on("connection", (socket) => {
-  
-  
+    let currentUser 
 
     // Page chat
     socket.on("message", (msg,user) => {
+      console.log("-----------------------------" )
       console.log("Message envoyé par "+user +": "+msg);
+      console.log("-----------------------------" )
 
       // Envoi les messages dans une liste pour les récupérer après
       historique.push({expediteur:user,contenue:msg})
+      console.log("-----------------------------" )
       console.log(historique)
+      console.log("-----------------------------" )
       
       io.emit("message", msg,user);
     });
 
     // Partie Username
     socket.on("username", (username) => {
-      console.log("Username: "+username);
+      console.log("-----------------------------" )
+      console.log("New User: "+username);
+      console.log("-----------------------------" )
+      currentUser=username
       
-      // Stocker les nom des utilisateurs connectés 
-      const connectedUser =[]
-      connectedUser.push(username)
+      // Envoi le nom du nouveau user dans la liste ( s'il n'est pas deja pris )
+      if(!connectedUsers.includes(username)){
+        connectedUsers.push(username)
+      } 
+
+      oldConnectedUsers = connectedUsers
 
       // je crée un délai pour donner le temps à la page de récupérer le nom du user 
       setTimeout (()=>{
-        io.emit("username", username);
+        io.emit("onlineUsers",connectedUsers,oldConnectedUsers);
       },1200)
 
       // l'historique est renvoyé à chaque fois qu'un nouveau user se connecte
       setTimeout (()=>{
-      io.emit("historique",historique,username)
+      io.emit("historique",historique)
       },1200)
     });
+
+    // Supprime le nom du user de la liste quand il se déconnect
+    socket.on("disconnect",()=>{
+      console.log("-----------------------------" )
+      console.log("User "+ currentUser+" is no longer with us")
+      console.log("-----------------------------" )
+
+      oldConnectedUsers = connectedUsers
+      connectedUsers = connectedUsers.filter(user => user !== currentUser);
+      io.emit("onlineUsers",connectedUsers,oldConnectedUsers);
+
+      // mise à jour de la liste
+      oldConnectedUsers= connectedUsers
+      
+    })
+
   });
 
   httpServer
