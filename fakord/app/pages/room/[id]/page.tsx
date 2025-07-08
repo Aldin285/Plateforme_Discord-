@@ -5,19 +5,19 @@ import React,{ useState,useEffect } from "react";
 
 
 import Header from '@/app/composants/header/page';
-import ChatRoom from '@/app/composants/chat/page';
+import Rooms from '@/app/composants/room/page';
 import Footer from '@/app/composants/footer/page';
 
 // Pour le web socket
 
-const Chat:NextPage = () =>{
+const Room:NextPage = () =>{
 
     return (
       <>
         <Header/>
-        <ChatRoom/>
+        <Rooms/>
         <Footer/>
        </>
     )
 }
-export default Chat
+export default Room

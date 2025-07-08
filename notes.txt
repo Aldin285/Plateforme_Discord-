@@ -1,3 +1,9 @@
+Tâches à faire :
+    Rendre le chatbox responsives quand la taille est réduite
+    Ajouter des chat room (salons) 
+
+Problèmes rencontrés :
+    
 Audio :
     Avec MediaThemeTailwindAudio, pour ajouter une audio depuis notre librairie, 
     il faut mettre le fichier audio dans le dossier "public"
@@ -16,7 +22,15 @@ Grid tailwind css:
 
 Fonctions que je veux ajouter : 
     Icons et photos de profil
-    pouvoir changer l'arrière plan du chat     
+    pouvoir changer l'arrière plan du chatbox    
 
-Tâches à faire :
-    Rendre les pages responsives quand la taille est réduite
+
+Lien pour le tuto Socket.io :
+https://blog.logrocket.com/implementing-websocket-communication-next-js/
+
+Quand on veut avoir la valeur d'une variable dont la valeur contient .getElementById("") :
+    On utilise HTMLInputElement ==> (document.getElementById(elementId) as HTMLInputElement).value
+
+Comment avoir une variable partagée ou unique dans le web socket : 
+    Si on veut que la variable soit partagé, on l'a met en dehors de io.on("connection")
+    Si on veut que la variable soit unique pour chaque user connecté , on l'a met dans io.on("connection")

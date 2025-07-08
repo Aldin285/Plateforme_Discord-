@@ -1,0 +1,43 @@
+'use client'
+import Form from 'next/form'
+import { useState, useRef } from 'react'
+import {socket} from "../../../socket"
+// import { url } from "inspector"
+// import Link from "next/link"
+
+// importation des icones
+import { FaPause } from "react-icons/fa";
+import { FaPlay } from "react-icons/fa";
+
+export default function Login() {
+
+ const [onlineUsername,SetOnlineUsername] = useState('')
+
+  const SendUsername =()=>{
+    socket.emit('username',onlineUsername)
+    console.log("TEST")
+  }
+
+     return (
+      <>
+      
+      <div className='grid grid-cols-3 grid-rows-3 gap-4 bg-linear-to-r from-cyan-900 to-blue-900'>
+        {/* image background de l'input  */}
+        <div className="col-start-2 row-start-2 w-full rounded-2xl max-w-xs  text-xl bg-[url(../public/pics/pearTetoDance.gif)] place-self-center bg-no-repeat bg-cover bg-center text-center">
+        
+        {/* Note : il faudra essayer de faire en sorte que l'input ne sorte pas de l'élément quand la page rétrécie */}
+          <Form action="/pages/chat" className=" shadow-md rounded px-8 pt-6 pb-8 mb-4 ">
+            <h1>Username</h1>
+            <br/>
+              <input onChange={(e)=>{SetOnlineUsername(e.target.value)}} className="bg-cyan-100 text-black field-sizing-content w-auto object-contain p-3 rounded-2xl" name="nomUser" placeholder='username...'/>
+          
+              <br/>
+              <br/>
+              <button onClick={SendUsername} type="submit" className="bg-green-300 hover:bg-green-400 text-black border-solid rounded-3xl p-2">Let's chat</button>
+            </Form>
+          </div>
+    
+        </div>
+    
+      </>)
+}
