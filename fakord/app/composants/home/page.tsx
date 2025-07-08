@@ -1,10 +1,13 @@
 'use client'
 import Form from 'next/form'
-import MediaThemeTailwindAudio from "player.style/tailwind-audio/react"
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import {socket} from "../../../socket"
 // import { url } from "inspector"
 // import Link from "next/link"
+
+// importation des icones
+import { FaPause } from "react-icons/fa";
+import { FaPlay } from "react-icons/fa";
 
 export default function Login() {
 
@@ -14,9 +17,10 @@ export default function Login() {
     socket.emit('username',onlineUsername)
     console.log("TEST")
   }
+
      return (
       <>
-    
+      
       <div className='grid grid-cols-3 grid-rows-3 gap-4 bg-linear-to-r from-cyan-900 to-blue-900'>
         {/* image background de l'input  */}
         <div className="col-start-2 row-start-2 w-full rounded-2xl max-w-xs  text-xl bg-[url(../public/pics/pearTetoDance.gif)] place-self-center bg-no-repeat bg-cover bg-center text-center">
@@ -33,20 +37,7 @@ export default function Login() {
             </Form>
           </div>
     
-          <div className=" col-start-3 row-start-3 flex items-end">
-            <MediaThemeTailwindAudio style={{width: "100%"}}>
-                <audio
-                  slot="media"
-                  src= "/audio/TetoPearSong.mp3"
-                  playsInline
-                  autoPlay
-                  crossOrigin="anonymous"
-                ></audio>
-              </MediaThemeTailwindAudio>
-          </div>
-    
         </div>
     
       </>)
-
 }

@@ -2,14 +2,17 @@
 
 // import { NextPage } from 'next'
 import React,{ useState,useEffect } from "react";
-
 import { useSearchParams } from "next/navigation";
+
+import { useRouter } from "next/navigation";
 
 import {socket} from "../../../socket"
 
 
 
 export default function ChatRoom() {
+    const router = useRouter()
+
     const searchParams = useSearchParams();
     const [Message,SetMessage] = useState('')
     const username = searchParams.get("nomUser")
@@ -19,17 +22,15 @@ export default function ChatRoom() {
         // Pour le web socket 
          useEffect(() => {
            
+            // Affichage des users en ligne 
             socket.on('onlineUsers',(connectedUsers,oldConnectedUsers)=>{
-        
                 console.log(`Users connectés : ${connectedUsers}`)
             
                 const br = document.createElement("br");
                 const listeUser= document.getElementById("ConnectedUsers")
                 // Supprime tout les noms users dans la liste pour éviter la répétition
-                for (const u of oldConnectedUsers){
-                        // console.log(`User ${count} deleted: ${u}`)
-                        const el = document.getElementById(u)
-                        el?.remove()
+                if(listeUser){
+                    listeUser.innerHTML=""
                 }
 
                 for (const u of connectedUsers){
@@ -43,7 +44,38 @@ export default function ChatRoom() {
                 }
                 
             })
-        
+
+            // Affichage des room disponibles
+            socket.on('rooms',(rooms)=>{
+            
+                const br = document.createElement("br");
+                const listeRooms= document.getElementById("Rooms")
+           
+                if (listeRooms){
+                    listeRooms.innerHTML=""
+                }
+
+                for (const u of rooms){
+                        const roomId=u.id
+                        console.log(roomId)
+
+                        const room = document.createElement("li")
+                        room.id =roomId 
+
+                        const roomLink = document.createElement("a")
+                        roomLink.href="room/"+roomId
+
+                        const roomName = document.createTextNode(u.name)
+
+                        roomLink.appendChild(roomName)
+                        room.appendChild(roomLink)
+                        listeRooms?.appendChild(room)
+                       
+                }
+                
+            })
+
+
             socket.on('message', (msg,senderUsername) => {
                 // Pour tester si le message est envoyé vers le serveur socket
                 console.log("Message sent by ", senderUsername,":", msg);
@@ -81,6 +113,8 @@ export default function ChatRoom() {
                 messagerie?.appendChild(message);
         });
 
+
+        // Partie historique 
          socket.on('historique', (historique) => {
 
                 const br = document.createElement("br");
@@ -148,25 +182,26 @@ export default function ChatRoom() {
                 <div className="  col-start-2 col-end-4 row-start-1 row-end-2 flex flex-col items-center bg-cover overflow-y-auto scrollbar-hide ">
                    <br/> 
                     <ul className="list-none  border-amber-100 rounded-4xl border-2 w-md size-lvw p-3  bg-blue-300" id="Messagerie">
-                        {/* break-all sert à faire un saut de ligne quand un mot est trop long pour le cadre définit */}
-                        <div className='end' >
-                        <p>nomUser1</p>
-                        <li className="break-all p-1  w-auto rounded-md bg-gradient-to-r from-emerald-500 from-10% via-teal-500 via-40% to-teal-800 to-80% ">test 1</li>
-                        <br/>
-                        </div>  <br/>
+                
                     </ul>  
                 </div>
 
-                <p className="col-start-4 col-end-5 row-start-1 row-end-2 flex flex-col items-center">Users Connectés</p>
+                {/* Partie rooms */}
+                <div className="  col-start-1 col-end-2 row-start-1 row-end-2 flex flex-col items-start bg-auto overflow-y-auto scrollbar-hide ">
+                   <br/> 
+                    <ul className="list-none  border-amber-100  border-2 w-auto size-auto p-3  bg-blue-300" id="Rooms">
+                        Aucune salle pour le moment
+                    </ul>  
+                </div>
+
+                
                
                {/* Partie users connectés */}
+               <p className="col-start-4 col-end-5 row-start-1 row-end-2 flex flex-col items-center">Users Connectés</p>
                <div className="col-start-4 col-end-5 row-start-1 row-end-2 flex flex-col items-center bg-cover  ">
                    <br/> 
-                    <ul className="list-none  border-amber-100 rounded-4xl border-2 w-50 p-3  bg-blue-300" id="ConnectedUsers">
-                        
-                        <li className="">test 1</li>
-                        <br/>
-                        
+                    <ul className="list-none  border-amber-100 rounded-4xl border-2 w-auto size-auto p-3  bg-blue-300" id="ConnectedUsers">
+                    Aucun User Connecté
                     </ul>  
                 </div>
             
@@ -180,6 +215,9 @@ export default function ChatRoom() {
                     <button onClick={sendMessage} className="bg-blue-300 hover:bg-blue-400 text-black border-solid rounded-3xl p-2" >Send</button>
                     
                 </div>
+                {/* <br/>
+                 <button  type="button" onClick={()=> router.push("room/2")} className="bg-red-500 hover:bg-blue-400 text-black border-solid rounded-3xl p-2" >Go to link</button> */}
+
     
             </div>  
             </>

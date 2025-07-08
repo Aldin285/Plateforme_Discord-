@@ -25,6 +25,11 @@ app.prepare().then(() => {
   // ne pas mettre cette variable dans le io.on("connection") sinon chaque utilisateur aura son propre historique
   const historique = []
   let connectedUsers = []
+
+
+  let rooms = [{id:1,name:"General"},
+      {id:2,name:"Room 1"}
+    ]
   
   let oldConnectedUsers
 
@@ -48,7 +53,7 @@ app.prepare().then(() => {
       io.emit("message", msg,user);
     });
 
-    // Partie Username
+    // Partie Username - Page Home
     socket.on("username", (username) => {
       console.log("-----------------------------" )
       console.log("New User: "+username);
@@ -70,6 +75,11 @@ app.prepare().then(() => {
       // l'historique est renvoyé à chaque fois qu'un nouveau user se connecte
       setTimeout (()=>{
       io.emit("historique",historique)
+      },1200)
+
+      // J'envoie les Rooms chat disponible
+      setTimeout (()=>{
+        io.emit("rooms",rooms);
       },1200)
     });
 
