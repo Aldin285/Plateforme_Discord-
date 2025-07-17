@@ -1,17 +1,33 @@
 'use client'
 import 'flowbite'
 
+// Importation des icones
 import { FaPause } from "react-icons/fa";
 import { FaPlay } from "react-icons/fa";
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
+
 
 export default function Header() {
     // Music
     const [currentMusic,setcurrentMusic] = useState('default')
 
-    // const musicSelect = document.getElementById("musicSelect")
-    console.log(currentMusic)
+    const musicList = ["Snowy","TetoPearSong","Aline","Sirène - Rouge dIris"]
+
+  
+
+    useEffect(() => {
+    const musicSelect = document.getElementById("musicSelect");
+    if (musicSelect) {
+        console.log("Test HEADER");
+        for (const el of musicList) {
+        musicSelect.innerHTML += `<option value="${el}">${el}</option>`;
+        }
+    }
+}, []); // Run once after the component mounts
+
+   
+
     const audioRef = useRef<HTMLAudioElement>(null)
     const [buttonStatus, setButtonStatus] = useState(false)
     
@@ -41,13 +57,10 @@ export default function Header() {
                 <div className="flex items-center lg:order-2">  
                 {/* <a href="./../../" className="text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800">Home</a> */}
                 
-                <select id='musicSelect' className='text-black rounded-3xl bg-gray-400'
-                onChange={(e)=>{setcurrentMusic(e.target.value)}}>
-                    <option value={"default"} selected>Select</option>
-                    <option value={"TetoPearSong"} >Teto Pear</option>
-                    <option value={"Aline"} >Aline</option>
-                    <option value={"Sirène - Rouge dIris"} >Sirène - Rouge dIris</option>  
-
+                <select className='text-black rounded-3xl bg-gray-400'
+                onChange={(e)=>{setcurrentMusic(e.target.value)}} id="musicSelect" >
+                    <option value={"Snowy"}>Select</option>
+                   
                 </select>
                 
                 <audio slot="media" src= {"/audio/"+ currentMusic+".mp3"}

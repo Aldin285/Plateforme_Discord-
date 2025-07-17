@@ -1,8 +1,12 @@
 Tâches à faire :
     Rendre le chatbox responsives quand la taille est réduite
     Ajouter des chat room (salons) 
+    Ajouter un effet de chargement quand on change de page
 
 Problèmes rencontrés :
+input qui sort du cadre quand la page rétrécie 
+la selection de music 
+Le nom de l'utilisateur connecté qui disparait quand on change de page dans la liste des users connectés
     
 Audio :
     Avec MediaThemeTailwindAudio, pour ajouter une audio depuis notre librairie, 
@@ -34,3 +38,7 @@ Quand on veut avoir la valeur d'une variable dont la valeur contient .getElement
 Comment avoir une variable partagée ou unique dans le web socket : 
     Si on veut que la variable soit partagé, on l'a met en dehors de io.on("connection")
     Si on veut que la variable soit unique pour chaque user connecté , on l'a met dans io.on("connection")
+
+useEffect :
+    Permet d'ajouter du contenu après la compilation de la page 
+    (à utiliser avec getElementById pour qu'il détecte l'élément sélectioné )

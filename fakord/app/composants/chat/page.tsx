@@ -4,14 +4,16 @@
 import React,{ useState,useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+
+
 
 import {socket} from "../../../socket"
 
 
 
 export default function ChatRoom() {
-    const router = useRouter()
+
 
     const searchParams = useSearchParams();
     const [Message,SetMessage] = useState('')
@@ -53,24 +55,11 @@ export default function ChatRoom() {
            
                 if (listeRooms){
                     listeRooms.innerHTML=""
-                }
-
-                for (const u of rooms){
-                        const roomId=u.id
-                        console.log(roomId)
-
-                        const room = document.createElement("li")
-                        room.id =roomId 
-
-                        const roomLink = document.createElement("a")
-                        roomLink.href="room/"+roomId
-
-                        const roomName = document.createTextNode(u.name)
-
-                        roomLink.appendChild(roomName)
-                        room.appendChild(roomLink)
-                        listeRooms?.appendChild(room)
-                       
+                     for (const u of rooms){
+                       listeRooms.innerHTML+="<li id='"+u.id+" '> \
+                       <a href='room/"+u.id+"?nomUser="+ username+"'> "+u.name+"</a> \
+                       </li> ";
+                    }
                 }
                 
             })
@@ -191,6 +180,13 @@ export default function ChatRoom() {
                    <br/> 
                     <ul className="list-none  border-amber-100  border-2 w-auto size-auto p-3  bg-blue-300" id="Rooms">
                         Aucune salle pour le moment
+                        {/* <li id='1'> 
+                       <Link href={{pathname :'room/1',
+                                    query:{
+                                    nomUser:'MikuBeam',
+                                    },
+                                    }}> Test </Link> 
+                       </li>  */}
                     </ul>  
                 </div>
 

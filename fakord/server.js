@@ -37,20 +37,22 @@ app.prepare().then(() => {
 
   io.on("connection", (socket) => {
     let currentUser 
-
-    // Page chat
-    socket.on("message", (msg,user) => {
+    // Page room
+    socket.on("messageRoom", (msg,user,roomId) => {
+      // Rejoindre le chat room
+      socket.join(roomId)
       console.log("-----------------------------" )
-      console.log("Message envoyé par "+user +": "+msg);
+      console.log("Votre message est : "+msg);
       console.log("-----------------------------" )
 
       // Envoi les messages dans une liste pour les récupérer après
-      historique.push({expediteur:user,contenue:msg})
-      console.log("-----------------------------" )
-      console.log(historique)
-      console.log("-----------------------------" )
+      historique.push({expediteur:user,contenue:msg,roomId:roomId})
+
+      // console.log("-----------------------------" )
+      // console.log(historique)
+      // console.log("-----------------------------" )
       
-      io.emit("message", msg,user);
+      io.to(roomId).emit("messageRoom", msg,user);
     });
 
     // Partie Username - Page Home
@@ -66,6 +68,10 @@ app.prepare().then(() => {
       } 
 
       oldConnectedUsers = connectedUsers
+    });
+    
+    // Renvoie les infos quand quelqu'un visite une page
+    socket.on("enLigne", ()=>{
 
       // je crée un délai pour donner le temps à la page de récupérer le nom du user 
       setTimeout (()=>{
@@ -81,7 +87,8 @@ app.prepare().then(() => {
       setTimeout (()=>{
         io.emit("rooms",rooms);
       },1200)
-    });
+
+    })
 
     // Supprime le nom du user de la liste quand il se déconnect
     socket.on("disconnect",()=>{
