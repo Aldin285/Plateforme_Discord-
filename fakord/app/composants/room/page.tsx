@@ -24,7 +24,7 @@ export default function Rooms() {
      const username = searchParams.get("nomUser")
    
     // chat box
-    const messagerie = document.getElementById("Messagerie");
+    
 
         // Pour le web socket 
          useEffect(() => {
@@ -79,6 +79,8 @@ export default function Rooms() {
 
 
             socket.on('messageRoom', (msg,senderUsername) => {
+                console.log("Message reçu")
+                const messagerie = document.getElementById("Messagerie");
             
                 const br = document.createElement("br");
             
@@ -116,7 +118,8 @@ export default function Rooms() {
 
         // Partie historique 
          socket.on('historique', (historique) => {
-                
+
+            const messagerie = document.getElementById("Messagerie");    
                 const br = document.createElement("br");
                     if ( messagerie){
                         messagerie.innerHTML=""

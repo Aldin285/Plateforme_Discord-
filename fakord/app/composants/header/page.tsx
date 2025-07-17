@@ -19,7 +19,6 @@ export default function Header() {
     useEffect(() => {
     const musicSelect = document.getElementById("musicSelect");
     if (musicSelect) {
-        console.log("Test HEADER");
         for (const el of musicList) {
         musicSelect.innerHTML += `<option value="${el}">${el}</option>`;
         }
