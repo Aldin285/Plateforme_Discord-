@@ -14,10 +14,15 @@ app.prepare().then(() => {
   const httpServer = createServer(handler);
 
   const io = new Server(httpServer, {
+    connectionStateRecovery:{
+    maxDisconnectionDuration: Infinity,
+    skipMiddlewares: true,
+  },
   cors: {
     origin: "*",
     methods: ["GET", "POST"]
   }
+  
 });
 
 
@@ -36,7 +41,23 @@ app.prepare().then(() => {
 
 
   io.on("connection", (socket) => {
+
     let currentUser 
+
+    console.log("-----------------------------" )
+    console.log("Session ID :  : "+socket.id);
+    console.log("-----------------------------" )
+
+    if (socket.recovered) {
+        console.log("-----------------------------" )
+        console.log(`la session est récupéré`);
+         console.log("-----------------------------" )
+    }else {
+        console.log("-----------------------------" )
+        console.log("La session précédente est perdu")
+        console.log("-----------------------------" )
+    }
+
     // Page room
     socket.on("messageRoom", (msg,user,roomId) => {
       // Rejoindre le chat room
@@ -61,6 +82,9 @@ app.prepare().then(() => {
       console.log("New User: "+username);
       console.log("-----------------------------" )
       currentUser=username
+
+      // enregistre le nom du user dans la session
+      socket.data.username= currentUser
       
       // Envoi le nom du nouveau user dans la liste ( s'il n'est pas deja pris )
       if(!connectedUsers.includes(username)){
@@ -73,11 +97,10 @@ app.prepare().then(() => {
     // Renvoie les infos quand quelqu'un visite une page
     socket.on("enLigne", ()=>{
 
-      // je crée un délai pour donner le temps à la page de récupérer le nom du user 
       setTimeout (()=>{
-        io.emit("onlineUsers",connectedUsers,oldConnectedUsers);
+      io.emit("onlineUsers",connectedUsers,oldConnectedUsers);
       },1200)
-
+      
       // l'historique est renvoyé à chaque fois qu'un nouveau user se connecte
       setTimeout (()=>{
       io.emit("historique",historique)
@@ -87,11 +110,14 @@ app.prepare().then(() => {
       setTimeout (()=>{
         io.emit("rooms",rooms);
       },1200)
-
     })
 
     // Supprime le nom du user de la liste quand il se déconnect
-    socket.on("disconnect",()=>{
+    socket.on("disconnect",(reason,details)=>{
+      console.log("-----------------------------" )
+      console.log("Cause de deconnexion :"+ reason)
+      console.log("-----------------------------" )
+      
       console.log("-----------------------------" )
       console.log("User "+ currentUser+" is no longer with us")
       console.log("-----------------------------" )

@@ -10,7 +10,7 @@ import { useState, useRef, useEffect } from 'react'
 
 export default function Header() {
     // Music
-    const [currentMusic,setcurrentMusic] = useState('default')
+    const [currentMusic,setcurrentMusic] = useState('Snowy')
 
     const musicList = ["Snowy","TetoPearSong","Aline","Sirène - Rouge dIris"]
 
@@ -49,7 +49,7 @@ export default function Header() {
                {/* icone gauche et logo */}
                 <p className="flex items-center">
                     <img src="/pics/dancingTetoPear.gif" className="mr-3 h-6 sm:h-9" alt=" Teto Pear" />
-                    <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">Fakord</span>
+                    <a href='/'><span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">Fakord</span></a>
                 </p>
 
                 {/* Musique du site */}
