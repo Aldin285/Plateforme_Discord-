@@ -1,44 +1,25 @@
 "use client";
 
-import { SetStateAction, useEffect, useState } from "react";
-import { socket } from "../../../socket";
+interface User {
+  _id: Number;
+  fistname: String;
+  lastname: String;
+  rooms:[String];
+  info:{
+    birthday:Date;
+    gender: String;
+  }
+}
+interface UsersProps{
+  users: User[];
+}
 
 export default function Home() {
-  const [isConnected, setIsConnected] = useState(false);
-  const [transport, setTransport] = useState("N/A");
-
-  useEffect(() => {
-    if (socket.connected) {
-      onConnect();
-    }
-
-    function onConnect() {
-      setIsConnected(true);
-      setTransport(socket.io.engine.transport.name);
-
-      socket.io.engine.on("upgrade", (transport: { name: SetStateAction<string>; }) => {
-        setTransport(transport.name);
-      });
-    }
-
-    function onDisconnect() {
-      setIsConnected(false);
-      setTransport("N/A");
-    }
-
-    socket.on("connect", onConnect);
-    socket.on("disconnect", onDisconnect);
-
-    return () => {
-      socket.off("connect", onConnect);
-      socket.off("disconnect", onDisconnect);
-    };
-  }, []);
-
+ 
   return (
     <div>
-      <p>Status: { isConnected ? "connected" : "disconnected" }</p>
-      <p>Transport: { transport }</p>
+      <h1 className="text-5xl">Test BDD</h1>
+      <h1>{process.env.NEXT_PUBLIC_MONGODB_URI?process.env.NEXT_PUBLIC_MONGODB_URI:"Pas d'uri"}</h1>    
     </div>
   );
 }

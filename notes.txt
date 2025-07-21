@@ -42,3 +42,10 @@ Comment avoir une variable partagée ou unique dans le web socket :
 useEffect :
     Permet d'ajouter du contenu après la compilation de la page 
     (à utiliser avec getElementById pour qu'il détecte l'élément sélectioné )
+
+
+La différence entre node et nodemon dans package.json : 
+    nodemone redémarre l'application à chaque fois qu'il y a un changement dans l'application
+
+Mongoose shéma : 
+    Quand on utilise une valeur par défault dans le shéma, il faut que la valeur de la partie par défault de l'élément ajouté soit 'undefined' pour éviter l'erreur  (element is not defined)

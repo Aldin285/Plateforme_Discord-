@@ -4,14 +4,17 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node server.js",
+    "dev": "concurrently \"node server.js\" \"node index.js\"",
     "build": "next build",
     "start": "NODE_ENV=production node server.js",
     "lint": "next lint"
   },
   "dependencies": {
+    "dotenv": "^17.2.0",
     "flowbite": "^3.1.2",
-    "next": "15.3.2",
+    "mongodb": "6.17",
+    "mongoose": "^8.16.4",
+    "next": "^15.4.2",
     "player.style": "^0.1.8",
     "pnpm": "^10.11.0",
     "postcss": "^8.5.3",
@@ -26,6 +29,8 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "concurrently": "^9.2.0",
+    "nodemon": "^3.1.10",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
