@@ -49,3 +49,8 @@ La différence entre node et nodemon dans package.json :
 
 Mongoose shéma : 
     Quand on utilise une valeur par défault dans le shéma, il faut que la valeur de la partie par défault de l'élément ajouté soit 'undefined' pour éviter l'erreur  (element is not defined)
+
+Model :
+    Pour créer un nouveau moodel, il faut créer une version .ts pour les composants et une version .js pour le fichier index.js qui utilise du Node.js
+Mes sources : 
+    https://medium.com/@turingvang/todo-app-nextjs-mongose-958b97d3afdb ==> Next.js et Mongoose

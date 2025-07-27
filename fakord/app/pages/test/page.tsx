@@ -1,25 +1,26 @@
-"use client";
+"use client"
 
-interface User {
-  _id: Number;
-  fistname: String;
-  lastname: String;
-  rooms:[String];
-  info:{
-    birthday:Date;
-    gender: String;
-  }
-}
-interface UsersProps{
-  users: User[];
-}
+import { NextPage } from 'next'
+import React,{ useState,useEffect } from "react";
 
-export default function Home() {
- 
-  return (
-    <div>
-      <h1 className="text-5xl">Test BDD</h1>
-      <h1>{process.env.NEXT_PUBLIC_MONGODB_URI?process.env.NEXT_PUBLIC_MONGODB_URI:"Pas d'uri"}</h1>    
-    </div>
-  );
+
+import Header from '@/app/composants/header/page';
+import Test from '@/app/composants/test/page';
+import Footer from '@/app/composants/footer/page';
+
+// Pour le web socket
+
+const Tests:NextPage = () =>{
+
+    return (
+      <>
+        {/* <Header/> */}
+        <Test/>
+        {/* <Footer/> */}
+       </>
+    )
 }
+export default Tests
+
+
+

@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import { type } from 'os';
 const { Schema, model } = mongoose;
 
 const userSchema = new Schema({
@@ -25,5 +24,5 @@ const userSchema = new Schema({
 });
 
 // 'User' sera ajouter dans la BDD comme nouvelle collection en miniscule et en pluriel
-const User = model('User', userSchema);
+const User = mongoose.models.User || mongoose.model("User",userSchema);
 export default User;
