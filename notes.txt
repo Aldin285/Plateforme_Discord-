@@ -1,7 +1,10 @@
 Tâches à faire :
     Rendre le chatbox responsives quand la taille est réduite
-    Ajouter des chat room (salons) 
     Ajouter un effet de chargement quand on change de page
+    Enregistrement user :
+        -   Vérifier si le nom et prénom ne sont pas pris 
+        -   Ajouter l'élément "username" + "adresse mail" dans le shéma du user 
+        -   changer l'input "gender" en select avec des éléments prédifis ( ex : attack helicopter)
 
 Problèmes rencontrés :
 input qui sort du cadre quand la page rétrécie 
