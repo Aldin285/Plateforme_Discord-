@@ -19,17 +19,22 @@ export async function POST(request: Request) {
     await connectDB();
     const body = await request.json();
     console.log('Received body:', body);
-    const { firstname, lastname, rooms, info } = body;
+    const { firstname, lastname, email, password, username, birthday, gender } = body;
 
-    if (!firstname || !lastname || !info?.birthday || !info?.gender) {
+    if (!firstname || !lastname || !birthday || !email || !password || !username || !gender){
       return NextResponse.json({ message: "All the fields are required" }, { status: 400 });
     }
 
     const newUser = await User.create({
       firstname,
       lastname,
-      rooms: rooms || [],
-      info,
+      email,
+      password,
+      username,
+      rooms:[],
+      friends: [],
+      birthday,
+      gender,
     });
     return NextResponse.json(newUser, { status: 201 });
   } catch (error) {

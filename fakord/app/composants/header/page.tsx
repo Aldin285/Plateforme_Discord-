@@ -12,7 +12,7 @@ export default function Header() {
     // Music
     const [currentMusic,setcurrentMusic] = useState('Snowy')
 
-    const musicList = ["Snowy","TetoPearSong","Aline","Sirène - Rouge dIris"]
+    const musicList = ["TetoPearSong","Aline","Sirène - Rouge dIris"]
 
   
 
@@ -23,7 +23,7 @@ export default function Header() {
         musicSelect.innerHTML += `<option value="${el}">${el}</option>`;
         }
     }
-}, []); // Run once after the component mounts
+}, []); // Runs once after the component mounts
 
    
 
@@ -58,7 +58,7 @@ export default function Header() {
                 
                 <select className='text-black rounded-3xl bg-gray-400'
                 onChange={(e)=>{setcurrentMusic(e.target.value)}} id="musicSelect" >
-                    <option value={"Snowy"}>Select</option>
+                    <option value={"Snowy"}>Snowy</option>
                    
                 </select>
                 

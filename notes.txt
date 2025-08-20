@@ -2,15 +2,20 @@ Tâches à faire :
     Rendre le chatbox responsives quand la taille est réduite
     Ajouter un effet de chargement quand on change de page
     Enregistrement user :
-        -   Vérifier si le nom et prénom ne sont pas pris 
-        -   Ajouter l'élément "username" + "adresse mail" dans le shéma du user 
-        -   changer l'input "gender" en select avec des éléments prédifis ( ex : attack helicopter)
+        -   Le user est renvoyé vers la page principale quand il est enregistré / connecté
+    Le user doit etre renvoyé vers la page login quand il n'est pas connecté 
+
+    ajouter dans ref le nom du shéma des rooms dans le shéma user 
+
 
 Problèmes rencontrés :
 input qui sort du cadre quand la page rétrécie 
-la selection de music 
 Le nom de l'utilisateur connecté qui disparait quand on change de page dans la liste des users connectés
-    
+
+Notes : 
+    Le nom et le prénom seront utilisés pour confirmer l'identité du user quand il y a une erreur de connexion
+
+
 Audio :
     Avec MediaThemeTailwindAudio, pour ajouter une audio depuis notre librairie, 
     il faut mettre le fichier audio dans le dossier "public"
@@ -57,3 +62,6 @@ Model :
     Pour créer un nouveau moodel, il faut créer une version .ts pour les composants et une version .js pour le fichier index.js qui utilise du Node.js
 Mes sources : 
     https://medium.com/@turingvang/todo-app-nextjs-mongose-958b97d3afdb ==> Next.js et Mongoose
+
+    Pour preventDefault() : https://www.tutorialspoint.com/how-to-stop-refreshing-the-page-on-submit-in-javascript
+                            https://stackoverflow.com/questions/61265736/parameter-e-implicitly-has-an-any-type-react-typescript

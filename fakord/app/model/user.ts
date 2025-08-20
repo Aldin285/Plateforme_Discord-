@@ -1,42 +1,63 @@
-import { type } from 'os';
-
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document, ObjectId } from "mongoose";
 
 export interface IUser extends Document {
-  _id: string;
   firstname : string;
-  lastname : string; 
+  lastname : string;
+  email:string;
+  password:string;
+  username: string;
+  rooms?: [ObjectId];
+  friends?: [ObjectId];
+  birthday: Date;
+  gender: string;
   dateOfCreation: Date;
-  rooms: [Number];
-  info:{
-    birthday:Date,
-    gender: string,
-  };
 }
 
 const userSchema = new Schema <IUser>({
-  _id: {
-    type: String,
-  },
-
-  firstname: {
+ firstname: {
     type: String,
     required: true,
   },
+
   lastname: {
     type: String,
     required: true,
   },
+
+  email: {
+    type: String,
+    required: true,
+  },
+  
+  password: {
+    type: String,
+    required: true,
+  },
+  username: {
+    type: String,
+    required: true,
+  },
+  
+  // Il faudra ajouter le nom du shéma de la room dans le ref
+   //les ID au lieu des noms en cas où le nom est modifié
+  rooms: [{ type: Schema.Types.ObjectId, ref: '' }],
+  
+  friends: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+
+  birthday: {
+    type: Date,
+    required: true,
+  },
+
+  gender:{
+    type: String,
+    required: true,
+  },
+
   dateOfCreation: {
     type: Date,
     default: () => Date.now(),
     immutable: true,
-  },
-  //les ID des salons au lieu des nom
-  rooms: [Number],
-  info: {
-    birthday: Date,
-    gender: String,
   }
 });
 
