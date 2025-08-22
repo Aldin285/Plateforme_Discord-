@@ -1,22 +1,80 @@
 [{
   "_id": {
-    "$oid": "687e85d0d365d5984b2e3445"
+    "$oid": "68a609ffdaf91eb3ed05357a"
+  },
+  "firstname": "Daisuke ",
+  "lastname": "Ishiwatari ",
+  "email": "daisuke.i@gmail.com",
+  "password": "12345678",
+  "username": "Sol Badguy",
+  "rooms": [],
+  "friends": [],
+  "birthday": {
+    "$date": "1973-08-14T00:00:00.000Z"
+  },
+  "gender": "Peak",
+  "dateOfCreation": {
+    "$date": "2025-08-20T17:46:39.116Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68a7b588b2d7e07a34317946"
   },
   "firstname": "Ada",
   "lastname": "Wong",
-  "dateOfCreation": {
-    "$date": "2025-07-21T18:24:16.366Z"
+  "email": "ada.w@gmail.com",
+  "password": "Ada12345",
+  "username": "Women in red",
+  "rooms": [],
+  "friends": [],
+  "birthday": {
+    "$date": "1974-01-01T00:00:00.000Z"
   },
-  "rooms": [
-    1,
-    5,
-    4
-  ],
-  "info": {
-    "birthday": {
-      "$date": "2000-02-01T00:00:00.000Z"
-    },
-    "gender": "Female"
+  "gender": "Peak",
+  "dateOfCreation": {
+    "$date": "2025-08-22T00:10:48.115Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68a7b87cb2d7e07a3431794e"
+  },
+  "firstname": "Lorien",
+  "lastname": "Testard",
+  "email": "lorien.t@gmail.com",
+  "password": "Lorien33",
+  "username": "LampMaster",
+  "rooms": [],
+  "friends": [],
+  "birthday": {
+    "$date": "1995-03-03T00:00:00.000Z"
+  },
+  "gender": "Peak",
+  "dateOfCreation": {
+    "$date": "2025-08-22T00:23:24.150Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68a7b9d5b2d7e07a34317951"
+  },
+  "firstname": "Alice",
+  "lastname": "Duport-Percier",
+  "email": "alice.d@gmail.com",
+  "password": "Alice123",
+  "username": "Sirène",
+  "rooms": [],
+  "friends": [],
+  "birthday": {
+    "$date": "2000-03-03T00:00:00.000Z"
+  },
+  "gender": "Peak",
+  "dateOfCreation": {
+    "$date": "2025-08-22T00:29:09.876Z"
   },
   "__v": 0
 }]

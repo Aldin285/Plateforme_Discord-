@@ -2,12 +2,32 @@
 
 @import "flowbite/src/themes/default";
 @plugin "flowbite/plugin";
-@source "../node_modules/flowbite";
+/* @source "../node_modules/flowbite"; */
 
 :root {
+  background-image: linear-gradient(
+    to right,
+    #6366f1 10%,  
+    #3b82f6 40%,  
+    #14c4af 80%  
+  );
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  font-optical-sizing: auto;
+  font-weight:normal;
+  font-style: normal;
+  color: whitesmoke;
+
+  overflow-wrap: break-word;
+
+  scroll-behavior: smooth;
+/* 
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #171717; */
 }
+
 
 @theme inline {
   --color-background: var(--background);
@@ -18,13 +38,19 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* --background: #0a0a0a;
+    --foreground: #ededed; */
+
+    background-image: linear-gradient(
+    to right,
+    #2e2f72 30%,
+    #0a5b61 75%    
+  );
   }
 }
 
 body {
-  background: var(--background);
+  /* background: var(--background); */
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
