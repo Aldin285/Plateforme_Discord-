@@ -54,11 +54,9 @@ export default function Test() {
             }).toString();
 
         // Renvoi vers la page de chat avec les données du user
-        setTimeout (()=>{
-              router.push(`../../pages/room/1?${params}`);
-        },1000)
        
-
+        router.push(`../../pages/room/1?${params}`);
+       
       }
     }
 
