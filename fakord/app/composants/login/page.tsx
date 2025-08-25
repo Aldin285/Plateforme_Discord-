@@ -26,15 +26,15 @@ export default function Login() {
         
         {/* Note : il faudra essayer de faire en sorte que l'input ne sorte pas de l'élément quand la page rétrécie */}
           <Form action="/pages/room/1" className=" shadow-md rounded px-8 pt-6 pb-8 ">
-            <h1>Username</h1>
+            <h1>Login</h1>
             <br/>
-              <input onChange={(e)=>{SetOnlineUsername(e.target.value)}} className="bg-cyan-100 text-black field-sizing-content w-auto object-contain p-3 rounded-2xl" name="nomUser" placeholder='username...'/>
+              <input onChange={(e)=>{SetOnlineUsername(e.target.value)}} className="bg-cyan-100 text-black field-sizing-content w-auto object-contain p-3 rounded-2xl" name="nomUser" placeholder='Email...'/>
           
               <br/>
               <br/>
               <div className="flex justify-center flex-wrap flex-row gap-4">
               <button onClick={SendUsername} type="submit" className="bg-green-300 hover:bg-green-400 text-black border-solid rounded-3xl p-2">Let's chat</button>
-              <a href='../../pages/register'className='flex items-center' > New User ?</a>
+              <a href='../../pages/register'className='flex items-center bg-blue-400 hover:bg-blue-500 text-black border-solid rounded-3xl p-2' > New User ?</a>
               </div>
             </Form>
           </div>
