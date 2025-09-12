@@ -71,7 +71,7 @@ export default function Login() {
           <Form onSubmit={identifyUser} action="/pages/room/1" className=" flex flex-col gap-4 items-center " >
             <h1>Login</h1>
 
-              <input type='email' onChange={(e)=>{setEmail(e.target.value)}} className="bg-cyan-100 text-black field-sizing-content w-fit min-w-30 object-contain p-3 rounded-2xl" name="email" id='email' placeholder='Email...' required/>
+              <input type='email' onChange={(e)=>{setEmail(e.target.value.toLowerCase())}} className="bg-cyan-100 text-black field-sizing-content w-fit min-w-30 object-contain p-3 rounded-2xl lowercase" name="email" id='email' placeholder='Email...' required/>
               <input type='password' onChange={(e)=>{setPassword(e.target.value)}} className="bg-cyan-100 text-black field-sizing-content min-w-30 w-fit object-contain p-3 rounded-2xl" name="password" id='password' placeholder='Password...' required/>
             
               <div className="flex flex-wrap flex-row gap-4 justify-center">

@@ -1,11 +1,11 @@
 Tâches à faire :
-    Rendre le chatbox responsives quand la taille est réduite
-    Ajouter un effet de chargement quand on change de page
     Enregistrement user :
         -   Le user est renvoyé vers la page principale quand il est enregistré / connecté
-    Le user doit etre renvoyé vers la page login quand il n'est pas connecté 
+    Le user doit être renvoyé vers la page login quand il n'est pas connecté 
 
-    ajouter dans ref le nom du shéma des rooms dans le shéma user 
+    Changer l'affichage des rooms de 'Rooms existantes' à 'Rooms lié au user' 
+
+    Ajouter l'effet de chargement dans les autres parties du site
 
 
 Problèmes rencontrés :
@@ -14,27 +14,28 @@ Le nom de l'utilisateur connecté qui disparait quand on change de page dans la 
 
 Notes : 
     Le nom et le prénom seront utilisés pour confirmer l'identité du user quand il y a une erreur de connexion
+    En ayant un soucis avec la récupération de la session,  j'utilise URLSearchParams pour avoir les données du users en utilisant son username
 
 
 Audio :
     Avec MediaThemeTailwindAudio, pour ajouter une audio depuis notre librairie, 
-    il faut mettre le fichier audio dans le dossier "public"
+    Il faut mettre le fichier audio dans le dossier "public".
 
 Pour Transporter une variable d'une page à une autre (voir la page chat) :
-    on utilise searchParams.get pour récupérer la valuer importer.
-    Puis, on ajoute la valuer importer dans une string dans ${} ==> '<p>${valeurImporte}</p>'. 
-    Avec innerHTML, en ajoute la string dans une div 
+    On utilise searchParams.get pour récupérer la valeur importée.
+    Puis, on ajoute la valeur importé dans une string dans ${} ==> '<p>${valeurImporte}</p>'. 
+    Avec innerHTML, en ajoute le string dans une div 
 
 
 Grid tailwind css: 
-    Quand on veut appliquer une position sur touts les grids items ==> place-items-...
+    Quand on veut appliquer une position sur tout les grids items ==> place-items-...
     Quand on veut appliquer une position sur un grid item précis ==> place-self-...
-    Quand on veut appliquer une position sur un grid item précis avec des positions différentes sur les deux axes ==> justify-self-... pour l'axe horizontal && self-... pour l'axe vertical
+    Quand on veut appliquer une position sur un grid item précis avec des positions différentes sur les deux axes ==> justify-self-... pour l'axe horizontal && self-... pour l'axe vertical.
 
 
 Fonctions que je veux ajouter : 
-    Icons et photos de profil
-    pouvoir changer l'arrière plan du chatbox    
+    Icônes et photos de profil
+    pouvoir changer l'arrière-plan du chatbox    
 
 
 Lien pour le tuto Socket.io :
@@ -43,23 +44,27 @@ https://blog.logrocket.com/implementing-websocket-communication-next-js/
 Quand on veut avoir la valeur d'une variable dont la valeur contient .getElementById("") :
     On utilise HTMLInputElement ==> (document.getElementById(elementId) as HTMLInputElement).value
 
+La différence entre ? et ! avec getElementById quand on veut avoir accès à innerHTML:
+    On utilise ! quand on est sûr que l'élément existe (renvoi une erreur dans le cas où l'élément est introuvable).
+    On utilise ? quand on n'est pas sûr que l'élément existe (plus sécurisée si l'élément est introuvable).
+
 Comment avoir une variable partagée ou unique dans le web socket : 
-    Si on veut que la variable soit partagé, on l'a met en dehors de io.on("connection")
-    Si on veut que la variable soit unique pour chaque user connecté , on l'a met dans io.on("connection")
+    Si on veut que la variable soit partagée, on la met en dehors de io.on("connection")
+    Si on veut que la variable soit unique pour chaque user connecté, on la met dans io.on("connection")
 
 useEffect :
     Permet d'ajouter du contenu après la compilation de la page 
-    (à utiliser avec getElementById pour qu'il détecte l'élément sélectioné )
+    (à utiliser avec getElementById pour qu'il détecte l'élément sélectionné).
 
 
 La différence entre node et nodemon dans package.json : 
     nodemone redémarre l'application à chaque fois qu'il y a un changement dans l'application
 
-Mongoose shéma : 
-    Quand on utilise une valeur par défault dans le shéma, il faut que la valeur de la partie par défault de l'élément ajouté soit 'undefined' pour éviter l'erreur  (element is not defined)
+Mongoose schéma : 
+    Quand on utilise une valeur par défaut dans le schéma, il faut que la valeur de la partie par défaut de l'élément ajouté soit 'undefined' pour éviter l'erreur  (element is not defined)
 
 Model :
-    Pour créer un nouveau moodel, il faut créer une version .ts pour les composants et une version .js pour le fichier index.js qui utilise du Node.js
+    Pour créer un nouveau model, il faut créer une version .ts pour les composants et une version .js pour le fichier index.js qui utilise du Node.js.
 Mes sources : 
     https://medium.com/@turingvang/todo-app-nextjs-mongose-958b97d3afdb ==> Next.js et Mongoose
 

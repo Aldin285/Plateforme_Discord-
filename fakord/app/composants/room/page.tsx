@@ -21,7 +21,7 @@ export default function Rooms() {
     const [Message,SetMessage] = useState('')
 
     // const username = localStorage.getItem("username")
-     const username = searchParams.get("nomUser")
+     const username = searchParams.get("username")
    
     // chat box
     
@@ -39,10 +39,10 @@ export default function Rooms() {
                 const br = document.createElement("br");
                 const listeUser= document.getElementById("ConnectedUsers")
                 // Supprime tout les noms users dans la liste pour éviter la répétition
-                if(listeUser){
-                    listeUser.innerHTML=""
+                if(connectedUsers.length!=0){
+                    listeUser!.innerHTML=""
                     for (const u of connectedUsers){
-                        listeUser.innerHTML+="<li>"+u +" </li>"
+                        listeUser!.innerHTML+="<li>"+u +" </li>"
                        
                 }
                 }
@@ -61,7 +61,7 @@ export default function Rooms() {
                     listeRooms.innerHTML=""
                         for (const u of rooms){
                         listeRooms.innerHTML+="<li id='"+u.id+" '> \
-                        <a href='"+u.id+"?nomUser="+ username+"'> "+u.name+"</a> \
+                        <a href='"+u.id+"?username="+ username+"'> "+u.name+"</a> \
                         </li> ";
 
                         if (pathnameId==u.id){
@@ -180,51 +180,52 @@ export default function Rooms() {
     
         return (
             <>
-            <div className='grid grid-cols-4 grid-rows-[500px_100px] gap-4 bg-linear-to-r from-cyan-900 to-blue-900 p-3 '>
+            <div className="flex flex-row justify-between items-start w-full p-3 gap-8">
                
-               {/* Partie Chat Box */}
-               <div className="col-start-2 col-end-4 row-start-1 row-end-2 flex flex-col items-center " id="roomName">
-                    <p className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-300 w-20 mb-1.5 animate-pulse"></p>
-               </div>
-               
-               
-               {/* Il faut rendre la box du chat responsive pour éviter le défilement horizontal */}
-                <div className="  col-start-2 col-end-4 row-start-1 row-end-2 flex flex-col items-center bg-cover overflow-y-auto scrollbar-hide ">
-                   <br/> 
-                    <ul className="list-none  border-amber-100 rounded-4xl border-2 w-md size-lvw p-3  bg-blue-300" id="Messagerie">
-                
-                    </ul>  
-                </div>
-
-                {/* Partie rooms */}
-                <div className="  col-start-1 col-end-2 row-start-1 row-end-2 flex flex-col items-start bg-auto">
-                   <br/> 
-                    <ul className="list-none  border-amber-100  border-2 w-auto size-auto p-3  bg-blue-300" id="Rooms">
+               {/* Rooms list */}
+                <div className="flex flex-col items-start min-w-[180px]">
+                    <h2 className="font-bold mb-2">Rooms</h2>
+                    <ul className="list-none  border-amber-100  border-2 w-auto size-auto p-3  rounded-2xl bg-blue-300" id="Rooms">
                         <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-300 w-20 mb-1.5 animate-pulse"></div>
                         <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-300 w-30 mb-1.5 animate-pulse"></div>
                     </ul>  
                 </div>
 
-                
                
-               {/* Partie users connectés */}
-               <p className="col-start-4 col-end-5 row-start-1 row-end-2 flex flex-col items-center">Users Connectés</p>
-               <div className="col-start-4 col-end-5 row-start-1 row-end-2 flex flex-col items-center bg-cover  ">
-                   <br/> 
-                    <ul className="list-none  border-amber-100 rounded-4xl border-2 w-auto size-auto p-3  bg-blue-300" id="ConnectedUsers">
+               {/* Il faut rendre la box du chat responsive pour éviter le défilement horizontal */}
+               {/* Chat box */}
+
+                {/* Current room title*/}
+                <div className=" flex flex-col items-center flex-1 max-w-2xl">
+                    <div id="roomName" className="mb-2">
+                    <p className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-300 w-20 mb-1.5 animate-pulse"></p>
+                    </div>
+
+                    <ul className="list-none bg-blue-300 border-amber-100 rounded-4xl border-2 size-lvw p-3 w-full min-h-[300px] max-h-[500px] overflow-y-auto scrollbar-hide " id="Messagerie">
+                    {/* Messages */}
+                    </ul>  
+
+                    {/* Message Input*/}
+                    <div className="flex flex-row items-center justify-center w-full mt-4 gap-x-3">
+                        <input onChange={(e)=>{SetMessage(e.target.value.trim())}}
+                         className="bg-cyan-100 text-black p-3 rounded-2xl " name="Message" id="Message"
+                          placeholder="message..." value={Message}/>
+                        
+                        <button onClick={sendMessage} className="bg-blue-300 hover:bg-blue-400 text-black border-solid rounded-3xl p-3" >
+                            Send
+                        </button>
+                    </div>
+                    
+                </div>
+
+                
+               {/*Connected users */}
+               <div className="flex flex-col items-center min-w-[180px]">
+
+               <p className="font-bold mb-2">Users Connectés</p>
+                    <ul className="list-none  border-amber-100 rounded-2xl border-2 p-3  bg-blue-300" id="ConnectedUsers">
                     Aucun User Connecté
                     </ul>  
-                </div>
-            
-                {/* Partie saisie message */}
-                <div className=" col-start-2 col-end-4 row-start-2 flex flex-row items-center justify-self-center self-start ">
-                 {/* <p>Your username is : {searchParams.get("nomUser")}</p> */}
-                    <input onChange={(e)=>{SetMessage(e.target.value)}
-                       } className="bg-cyan-100 text-black p-1 rounded-2xl" name="Message" id="Message" placeholder="message..." value={Message}/>
-                    <br/>
-                    
-                    <button onClick={sendMessage} className="bg-blue-300 hover:bg-blue-400 text-black border-solid rounded-3xl p-2" >Send</button>
-                    
                 </div>
                 {/* <br/>
                  <button  type="button" onClick={()=> router.push("room/2")} className="bg-red-500 hover:bg-blue-400 text-black border-solid rounded-3xl p-2" >Go to link</button> */}

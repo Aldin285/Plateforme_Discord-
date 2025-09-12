@@ -16,6 +16,7 @@ const userSchema = new Schema({
     email: {
       type: String,
       required: true,
+      unique: true,
     },
     
     password: {
@@ -25,6 +26,7 @@ const userSchema = new Schema({
     username: {
       type: String,
       required: true,
+      unique: true,
     },
     
     // Il faudra ajouter le nom du shéma de la room dans le ref

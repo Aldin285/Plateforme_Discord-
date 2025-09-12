@@ -27,6 +27,7 @@ const userSchema = new Schema <IUser>({
   email: {
     type: String,
     required: true,
+    unique: true,
   },
   
   password: {
@@ -36,11 +37,12 @@ const userSchema = new Schema <IUser>({
   username: {
     type: String,
     required: true,
+    unique: true,
   },
   
   // Il faudra ajouter le nom du shéma de la room dans le ref
    //les ID au lieu des noms en cas où le nom est modifié
-  rooms: [{ type: Schema.Types.ObjectId, ref: '' }],
+  rooms: [{ type: Schema.Types.ObjectId, ref: 'Room' }],
   
   friends: [{ type: Schema.Types.ObjectId, ref: 'User' }],
 

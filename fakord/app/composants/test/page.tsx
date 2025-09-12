@@ -4,6 +4,8 @@
 
 import { IUser } from '@/app/model/user';
 
+import { IRoom } from '@/app/model/room';
+
 import { useState, useEffect } from 'react';
 
 import { useRouter } from 'next/navigation';
@@ -11,13 +13,12 @@ import { useRouter } from 'next/navigation';
 
 export default function Test() {
 
-  // Les users de la BDD
-    const [users, setUsers]= useState<IUser[]>([])
+  // Les rooms de la BDD
+    const [rooms, setRooms]= useState<IRoom[]>([])
 
     // Les inputs
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [username, setUsername] = useState('');
+    const [roomName, setRoomName] = useState('');
+    const [createdBy, setCreatedBy] = useState('');
 
     // Message d'erreur lors de la création d'un user
     const [warningMsg, setWarningMsg] = useState('');
@@ -28,46 +29,44 @@ export default function Test() {
 
 
      
-    async function identifyUser(event: React.FormEvent<HTMLFormElement>) {
+    // async function identifyRoom(event: React.FormEvent<HTMLFormElement>) {
+    //   event.preventDefault();
+
+     
+       
+    //   }
+    
+    async function AddRoom(event: React.FormEvent<HTMLFormElement>) {
       event.preventDefault();
+      // Extraction de la liste des rooms
+       const roomResponse = await fetch("/api/rooms")
+       const roomData =  await roomResponse.json();
 
-      const response = await fetch("/api/users")
-      const data =  await response.json();
+      // Extraction de la liste des users
+        const userResponse = await fetch("/api/users")
+        const userData =  await userResponse.json();
 
-      // Detecter si l'email et le username sont déjà utilisés avant la création du user
-      const detectEmail = await data.find((user: IUser) => user.email === email);
-      const checkPassword =detectEmail && detectEmail.password === password;
-      
-      
-      if (!detectEmail) {
-          setWarningMsg("Adresse mail intouvable");
-          
+        const roomCreator = userData.find((user: IUser) => String(user.username) === createdBy);
 
-      }else if(!checkPassword){
-          setWarningMsg("Mot de passe incorecte");
- 
-      }else{
-        setWarningMsg("");
-
-         const params = new URLSearchParams({
-                username: detectEmail.username,
-            }).toString();
-
-        // Renvoi vers la page de chat avec les données du user
-       
-        router.push(`../../pages/room/1?${params}`);
-       
-      }
+       await fetch("/api/rooms",{
+          method: "POST",
+          body: JSON.stringify({ 
+              name: roomName,
+              createdBy: roomCreator?._id,
+              members:[roomCreator?._id],
+          }),
+          headers: {'Content-Type': 'application/json'}
+      });
     }
 
 
-    async function fetchUsers() {
+    async function fetchRooms() {
        try {
       
-        const response = await fetch("/api/users")
+        const response = await fetch("/api/rooms")
         const data =  await response.json();
 
-        setUsers(data);
+        setRooms(data);
 
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -77,7 +76,7 @@ export default function Test() {
 
     useEffect(()=>{
 
-      fetchUsers();
+      fetchRooms();
 
     },[])
 
@@ -87,30 +86,30 @@ export default function Test() {
         <h1 className="text-5xl">Test BDD</h1>
         <h1>{process.env.NEXT_PUBLIC_MONGODB_URI?process.env.NEXT_PUBLIC_MONGODB_URI:"Pas d'uri"}</h1>    
         <br/>
-        <h1 className="text-5xl">La liste des Users</h1>
-        {users.length>0 ? (
+        <h1 className="text-5xl">La liste des Rooms</h1>
+        {rooms.length>0 ? (
            <ul>
             
-            {users.map((u)=>(
-                <li key={String(u._id)} id={String(u._id)}>{u.firstname}</li>
+            {rooms.map((u)=>(
+                <li key={String(u._id)} id={String(u._id)}>{u.name}</li>
             ))}
            </ul>
         ):
-        <p>No current user</p>
+        <p>No current room</p>
         }
 
         <br/>
 
-        <h1 className="text-5xl" >Identification </h1>
+        <h1 className="text-5xl" >Création d'une Room </h1>
           <br/>
-          <form onSubmit={identifyUser} action="../../pages/room/1" className='flex flex-col gap-4'>
+          <form onSubmit={AddRoom}  className='flex flex-col gap-4'>
           
-             <input type='email' onChange={(e)=>{setEmail(e.target.value)}} className="bg-cyan-100 text-black field-sizing-content w-fit min-w-30 object-contain p-3 rounded-2xl" name="email" id='email' placeholder='Email...' required/>
-              <input type='password' onChange={(e)=>{setPassword(e.target.value)}} className="bg-cyan-100 text-black field-sizing-content min-w-30 w-fit object-contain p-3 rounded-2xl" name="password" id='password' placeholder='Password...' required/>
+             <input type='text' onChange={(e)=>{setCreatedBy(e.target.value.trim())}} className="bg-cyan-100 text-black field-sizing-content w-fit min-w-30 object-contain p-3 rounded-2xl" name="createdBy" id='email' placeholder='Creator' required/>
+              <input type='text' onChange={(e)=>{setRoomName(e.target.value.trim())}} className="bg-cyan-100 text-black field-sizing-content min-w-30 w-fit object-contain p-3 rounded-2xl" name="roomName" id='password' placeholder='Room name' required/>
             
            
               <p className= {`text-red-500 w-fit ${ warningMsg === ""? "size-0" : "py-5" } `}  id="warning">{warningMsg}</p> 
-              <button type="submit" className="bg-green-300 hover:bg-green-400 text-black border-solid w-fit rounded-3xl p-2">Se connecter</button>
+              <button type="submit" className="bg-green-300 hover:bg-green-400 text-black border-solid w-fit rounded-3xl p-2">Create</button>
           </form>
       </div>
 

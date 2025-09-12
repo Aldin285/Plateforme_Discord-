@@ -96,14 +96,14 @@ export default function Register() {
     <div className='flex items-center flex-col gap-4 py-10'>
         <div className='bg-[rgba(154,224,206,0.31)] bg-contain backdrop-blur-md rounded-[20px] px-4 p-5'>
         <h1 className='text-center pb-5'>New account</h1>
-          <form onSubmit={AddUser} action="../../pages/room/1" className='flex flex-col gap-4'>
+          <form onSubmit={AddUser} className='flex flex-col gap-4'>
           
-              <input type='text' onChange={(e)=>{setFirstname(e.target.value)}} className="bg-cyan-100 text-black field-sizing-content w-fit min-w-50 object-contain p-3 rounded-2xl" name="firstname" id='firstname' placeholder='Firstname...' required/>
-              <input type='text' onChange={(e)=>{setLastname(e.target.value)}} className="bg-cyan-100 text-black field-sizing-content w-fit min-w-50 object-contain p-3 rounded-2xl" name="lastname" id='lastname' placeholder='Lastname...' required/>
+              <input type='text' onChange={(e)=>{setFirstname(e.target.value.trim())}} className="bg-cyan-100 text-black field-sizing-content w-fit min-w-50 object-contain p-3 rounded-2xl" name="firstname" id='firstname' placeholder='Firstname...' required/>
+              <input type='text' onChange={(e)=>{setLastname(e.target.value.trim())}} className="bg-cyan-100 text-black field-sizing-content w-fit min-w-50 object-contain p-3 rounded-2xl" name="lastname" id='lastname' placeholder='Lastname...' required/>
               <input type='date' min={"1925-01-01"} max={maxDate} onChange={(e)=>{setBirthday(e.target.value)}} className="bg-cyan-100 text-black field-sizing-content w-fit min-w-50 object-contain p-3 rounded-2xl" name="birthday" id='birthday' placeholder='Birthday...' required/>
-              <input type='email' onChange={(e)=>{setEmail(e.target.value)}} className="bg-cyan-100 text-black field-sizing-content w-fit min-w-50 object-contain p-3 rounded-2xl" name="email" id='email' placeholder='Email...' required/>
-              <input type='password' pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" onChange={(e)=>{setPassword(e.target.value)}} className="bg-cyan-100 text-black field-sizing-content min-w-50 w-fit object-contain p-3 rounded-2xl" name="password" id='password' placeholder='Password...' required/>
-              <input type='text' onChange={(e)=>{setUsername(e.target.value)}} className="bg-cyan-100 text-black field-sizing-content w-fit min-w-50 object-contain p-3 rounded-2xl" name="username" id='username' placeholder='Username...' required/>
+              <input type='email' onChange={(e)=>{setEmail(e.target.value.toLowerCase().trim())}} className="bg-cyan-100 text-black field-sizing-content w-fit min-w-50 object-contain p-3 rounded-2xl lowercase" name="email" id='email' placeholder='Email...' required/>
+              <input type='password' pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" onChange={(e)=>{setPassword(e.target.value.trim())}} className="bg-cyan-100 text-black field-sizing-content min-w-50 w-fit object-contain p-3 rounded-2xl" name="password" id='password' placeholder='Password...' required/>
+              <input type='text' onChange={(e)=>{setUsername(e.target.value.trim())}} className="bg-cyan-100 text-black field-sizing-content w-fit min-w-50 object-contain p-3 rounded-2xl" name="username" id='username' placeholder='Username...' required/>
               <select className='bg-cyan-100 text-black field-sizing-content w-fit min-w-50 object-contain p-3 rounded-2xl'
                   onChange={(e)=>{setGender(e.target.value)}} name='gender' id="gender" required >
                       <option value="" >None</option>

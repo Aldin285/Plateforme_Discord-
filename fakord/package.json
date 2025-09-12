@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"node server.js\" \"nodemon index.js\"",
+    "dev": "concurrently \"nodemon server.js\" \"nodemon index.js\"",
     "clean": "rimraf .next",
     "build": "next build",
     "start": "NODE_ENV=production node server.js",
