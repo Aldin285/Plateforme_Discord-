@@ -29,12 +29,14 @@ const roomSchema = new Schema <IRoom>({
     immutable: true,
   },
   
+  // Chef
   currentOwner: {
     type: Schema.Types.ObjectId,
     ref: 'User',
     required: true,
   },
 
+  // Sous-chef
   substitute: {
     type: Schema.Types.ObjectId,
     ref: 'User',

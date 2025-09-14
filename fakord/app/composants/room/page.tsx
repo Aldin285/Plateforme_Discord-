@@ -9,9 +9,13 @@ import { useSearchParams,usePathname } from "next/navigation";
 import {socket} from "../../../socket"
 
 
+import { IUser } from '@/app/model/user';
+import { IRoom } from '@/app/model/room';
+
+
 
 export default function Rooms() {
-    // POur avoir l'id du room
+    // POur avoir l'id du room actuel
     let pathname = usePathname()
     let pathnameSplit = pathname.split("/")
     let pathnameId = pathnameSplit[pathnameSplit.length-1]
@@ -22,6 +26,62 @@ export default function Rooms() {
 
     // const username = localStorage.getItem("username")
      const username = searchParams.get("username")
+
+
+    //  ------------------------------------------------------------------------------------------------------------------------------------------
+    // Message d'erreur pour la création d'une room
+     const [warningMsg, setWarningMsg] = useState('');
+
+     const newRoom = document.getElementById("newRoom")
+     const [newRoomDisplay,SetNewRoomDisplay] = useState(false)
+
+    //  Sasie de nom room 
+     const [newRoomName, SetNewRoomName] = useState('');
+
+    // Fonction affichage menu creation room
+     function NewRoomDisplaySwitch(){
+        SetNewRoomDisplay(!newRoomDisplay)   
+    }
+
+    // Fonction ajout room
+    async function AddRoom(event: React.FormEvent<HTMLFormElement>) {
+          event.preventDefault();
+          
+          // La liste des rooms
+           const roomResponse = await fetch("/api/rooms")
+           const roomData =  await roomResponse.json();
+    
+          // La liste des users
+            const userResponse = await fetch("/api/users")
+            const userData =  await userResponse.json();
+    
+          // Detection du user actuel
+            const currentUser = userData.find((user: IUser) => String(user.username) === username);
+    
+          // Detecter si le nom de la room est déjà utilisé avant la création
+          const detectRoomName = roomData.find((room: IRoom) => room.name === username);
+    
+          if (detectRoomName) {
+              setWarningMsg("Ce nom de room est déjà utilisé");
+          }else if(!currentUser){
+              setWarningMsg("Une erreur est survenue, veiller vous reconnecter");
+          }else{
+            setWarningMsg("");
+    
+           await fetch("/api/rooms",{
+              method: "POST",
+              body: JSON.stringify({ 
+                  name: newRoomName,
+                  createdBy: currentUser?._id,
+                  members:[currentUser?._id],
+              }),
+              headers: {'Content-Type': 'application/json'}
+          });
+          
+          }
+        }
+
+         //    ------------------------------------------------------------------------------------------------------------------------------------------
    
     // chat box
     
@@ -73,6 +133,10 @@ export default function Rooms() {
                         }
                         
                     }
+
+                    // listeRooms.innerHTML+="<li> \
+                    //      <button>+ New room </button> \
+                    //     </li> ";
                 }
                 
             })
@@ -188,7 +252,11 @@ export default function Rooms() {
                     <ul className="list-none  border-amber-100  border-2 w-auto size-auto p-3  rounded-2xl bg-blue-300" id="Rooms">
                         <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-300 w-20 mb-1.5 animate-pulse"></div>
                         <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-300 w-30 mb-1.5 animate-pulse"></div>
-                    </ul>  
+                    </ul>
+
+                    <div className="pt-3"> 
+                        <button onClick={NewRoomDisplaySwitch} className="border-t-2 border-t-amber-50 cursor-pointer ">+New room</button>
+                    </div>
                 </div>
 
                
@@ -230,7 +298,28 @@ export default function Rooms() {
                 {/* <br/>
                  <button  type="button" onClick={()=> router.push("room/2")} className="bg-red-500 hover:bg-blue-400 text-black border-solid rounded-3xl p-2" >Go to link</button> */}
 
-    
+
+                {/* Partie création room */}
+
+                {newRoomDisplay && (
+                <div className="fixed inset-0 bg-black/40 z-98"></div>
+                )}
+
+                <form onSubmit={AddRoom} className={` realative ${newRoomDisplay?"" : "hidden"} z-99`} id="newRoom">
+                    <div className="absolute top-1/3 left-4/10 flex flex-col items-center gap-y-5  bg-emerald-700 p-3 rounded-2xl text-nowrap text-center">
+                        <h1>New Room</h1>
+
+                        <input type='text'  onChange={(e)=>{SetNewRoomName(e.target.value.trim())}} className="bg-cyan-100 text-black field-sizing-content min-w-30 w-fit object-contain p-3 rounded-2xl" name="roomName" id='password' placeholder='Room name' required/>
+           
+                        <p className= {`text-red-500 w-fit ${ warningMsg === ""? "hidden" : "py-5" } `}  id="warning">{warningMsg}</p> 
+
+                        <div className="flex flex-row gap-x-3">
+                            <button type="submit" className="bg-green-300 hover:bg-green-400 text-black border-solid w-fit rounded-3xl p-2 cursor-pointer">Create</button>
+                            <button onClick={()=>SetNewRoomDisplay(false)} type="button" className="bg-red-300 hover:bg-red-400 text-black border-solid w-fit rounded-3xl p-2 cursor-pointer">Cancel</button>
+                        </div>
+                    </div>
+                </form>
+
             </div>  
             </>
         )

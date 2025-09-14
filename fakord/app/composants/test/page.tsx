@@ -20,7 +20,7 @@ export default function Test() {
     const [roomName, setRoomName] = useState('');
     const [createdBy, setCreatedBy] = useState('');
 
-    // Message d'erreur lors de la création d'un user
+    // Message d'erreur 
     const [warningMsg, setWarningMsg] = useState('');
 
     // Routage
@@ -38,25 +38,39 @@ export default function Test() {
     
     async function AddRoom(event: React.FormEvent<HTMLFormElement>) {
       event.preventDefault();
-      // Extraction de la liste des rooms
+      
+      // La liste des rooms
        const roomResponse = await fetch("/api/rooms")
        const roomData =  await roomResponse.json();
 
-      // Extraction de la liste des users
+      // La liste des users
         const userResponse = await fetch("/api/users")
         const userData =  await userResponse.json();
 
-        const roomCreator = userData.find((user: IUser) => String(user.username) === createdBy);
+      // User actuel
+        const currentUser = userData.find((user: IUser) => String(user.username) === createdBy);
+
+      // Detecter si le nom de la room est déjà utilisé avant la création de la room
+      const detectRoomName = roomData.find((room: IRoom) => room.name === roomName);
+
+      if (detectRoomName) {
+          setWarningMsg("Ce nom de room est déjà utilisé");
+      }else if(!currentUser){
+          setWarningMsg("Une erreur est survenue, veiller vous reconnecter");
+      }else{
+        setWarningMsg("");
 
        await fetch("/api/rooms",{
           method: "POST",
           body: JSON.stringify({ 
               name: roomName,
-              createdBy: roomCreator?._id,
-              members:[roomCreator?._id],
+              createdBy: currentUser?._id,
+              members:[currentUser?._id],
           }),
           headers: {'Content-Type': 'application/json'}
       });
+      
+      }
     }
 
 
@@ -104,12 +118,11 @@ export default function Test() {
           <br/>
           <form onSubmit={AddRoom}  className='flex flex-col gap-4'>
           
-             <input type='text' onChange={(e)=>{setCreatedBy(e.target.value.trim())}} className="bg-cyan-100 text-black field-sizing-content w-fit min-w-30 object-contain p-3 rounded-2xl" name="createdBy" id='email' placeholder='Creator' required/>
-              <input type='text' onChange={(e)=>{setRoomName(e.target.value.trim())}} className="bg-cyan-100 text-black field-sizing-content min-w-30 w-fit object-contain p-3 rounded-2xl" name="roomName" id='password' placeholder='Room name' required/>
-            
+            <input type='text' onChange={(e)=>{setCreatedBy(e.target.value.trim())}} className="bg-cyan-100 text-black field-sizing-content w-fit min-w-30 object-contain p-3 rounded-2xl" name="createdBy" id='email' placeholder='Creator' required/>
+            <input type='text' onChange={(e)=>{setRoomName(e.target.value.trim())}} className="bg-cyan-100 text-black field-sizing-content min-w-30 w-fit object-contain p-3 rounded-2xl" name="roomName" id='password' placeholder='Room name' required/>
            
-              <p className= {`text-red-500 w-fit ${ warningMsg === ""? "size-0" : "py-5" } `}  id="warning">{warningMsg}</p> 
-              <button type="submit" className="bg-green-300 hover:bg-green-400 text-black border-solid w-fit rounded-3xl p-2">Create</button>
+            <p className= {`text-red-500 w-fit ${ warningMsg === ""? "hidden" : "py-2" } `}  id="warning">{warningMsg}</p> 
+            <button type="submit" className="bg-green-300 hover:bg-green-400 text-black border-solid w-fit rounded-3xl p-2">Create</button>
           </form>
       </div>
 

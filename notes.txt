@@ -3,9 +3,12 @@ Tâches à faire :
         -   Le user est renvoyé vers la page principale quand il est enregistré / connecté
     Le user doit être renvoyé vers la page login quand il n'est pas connecté 
 
-    Changer l'affichage des rooms de 'Rooms existantes' à 'Rooms lié au user' 
+    Changer l'affichage des rooms de 'Rooms existantes' à 'Rooms lié au user'
+    Faire une redirection de page quand la nouvelle room est créé  
 
     Ajouter l'effet de chargement dans les autres parties du site
+
+    Gestion des erreurs coté serveur ( le faire à la fin car j'ignore comment pour le moment)
 
 
 Problèmes rencontrés :
