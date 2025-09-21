@@ -34,9 +34,7 @@ export default function Login() {
         const detectEmail = await data.find((user: IUser) => user.email === email);
         const checkPassword =detectEmail && detectEmail.password === password;
         
-        // Envoi du username au serveur socket.io
-        socket.emit('username',detectEmail.username)
-
+       
         // Vérifications de l'adresse mail et du mot de passe 
         if (!detectEmail) {
             setWarningMsg("Adresse mail intouvable");
@@ -53,9 +51,12 @@ export default function Login() {
                   username: detectEmail.username,
               }).toString();
 
-          // Renvoi vers la page de chat avec les données du user
-          
-          router.push(`../../pages/room/1?${params}`);
+            // Envoi du username au serveur socket.io
+            socket.emit('username',detectEmail.username)
+
+
+            // Renvoi vers la page de chat avec les données du user
+            router.push(`../../pages/room/1?${params}`);
           
         }
       }

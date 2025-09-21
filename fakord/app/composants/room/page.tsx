@@ -15,7 +15,7 @@ import { IRoom } from '@/app/model/room';
 
 
 export default function Rooms() {
-    // POur avoir l'id du room actuel
+    // Pour avoir l'id du room actuel
     let pathname = usePathname()
     let pathnameSplit = pathname.split("/")
     let pathnameId = pathnameSplit[pathnameSplit.length-1]
@@ -59,16 +59,16 @@ export default function Rooms() {
             const currentUser = userData.find((user: IUser) => String(user.username) === username);
     
           // Detecter si le nom de la room est déjà utilisé avant la création
-          const detectRoomName = roomData.find((room: IRoom) => room.name === username);
+          const detectRoomName = roomData.find((room: IRoom) => room.name === newRoomName);
     
           if (detectRoomName) {
               setWarningMsg("Ce nom de room est déjà utilisé");
-          }else if(!currentUser){
+          }else if(!currentUser || currentUser===undefined){
               setWarningMsg("Une erreur est survenue, veiller vous reconnecter");
           }else{
             setWarningMsg("");
     
-           await fetch("/api/rooms",{
+           const postResponse = await fetch("/api/rooms",{
               method: "POST",
               body: JSON.stringify({ 
                   name: newRoomName,
@@ -78,11 +78,24 @@ export default function Rooms() {
               headers: {'Content-Type': 'application/json'}
           });
           
+        //   Attendre que la room soit créé pour pouvoir utiliser son ID
+          const createdRoom = await postResponse.json();
+
+          await fetch("/api/users", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                userId: currentUser?._id,
+                newRoomId: createdRoom._id,
+                }),
+         });
+          
           }
         }
 
          //    ------------------------------------------------------------------------------------------------------------------------------------------
-   
+        
+        // Affichage des rooms du user
     // chat box
     
 
@@ -133,10 +146,6 @@ export default function Rooms() {
                         }
                         
                     }
-
-                    // listeRooms.innerHTML+="<li> \
-                    //      <button>+ New room </button> \
-                    //     </li> ";
                 }
                 
             })
