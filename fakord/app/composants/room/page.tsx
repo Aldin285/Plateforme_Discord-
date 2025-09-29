@@ -32,7 +32,7 @@ export default function Rooms() {
     // Message d'erreur pour la création d'une room
      const [warningMsg, setWarningMsg] = useState('');
 
-     const newRoom = document.getElementById("newRoom")
+    //  const newRoom = document.getElementById("newRoom")
      const [newRoomDisplay,SetNewRoomDisplay] = useState(false)
 
     //  Sasie de nom room 
@@ -45,21 +45,22 @@ export default function Rooms() {
 
     // Fonction ajout room
     async function AddRoom(event: React.FormEvent<HTMLFormElement>) {
+        try{
           event.preventDefault();
           
-          // La liste des rooms
-           const roomResponse = await fetch("/api/rooms")
-           const roomData =  await roomResponse.json();
-    
-          // La liste des users
+            // La liste des rooms
+            const roomResponse = await fetch("/api/rooms")
+            const roomData =  await roomResponse.json();
+
+            // La liste des users
             const userResponse = await fetch("/api/users")
             const userData =  await userResponse.json();
-    
-          // Detection du user actuel
+
+            // Detection du user actuel
             const currentUser = userData.find((user: IUser) => String(user.username) === username);
-    
-          // Detecter si le nom de la room est déjà utilisé avant la création
-          const detectRoomName = roomData.find((room: IRoom) => room.name === newRoomName);
+
+            // Detecter si le nom de la room est déjà utilisé avant la création
+            const detectRoomName = roomData.find((room: IRoom) => room.name === newRoomName);
     
           if (detectRoomName) {
               setWarningMsg("Ce nom de room est déjà utilisé");
@@ -91,22 +92,77 @@ export default function Rooms() {
          });
           
           }
+        }catch (error) {
+                 console.error("Error creating room:", error);
+        } finally {
+            // Ferme le menu de création de room
+            SetNewRoomDisplay(false)
+            // Recharge la page pour afficher la nouvelle room
+            window.location.reload();
         }
+    }
 
-         //    ------------------------------------------------------------------------------------------------------------------------------------------
+     //    ------------------------------------------------------------------------------------------------------------------------------------------
         
         // Affichage des rooms du user
+        async function fetchUserRooms() {
+            try {
+                // Récupérer la liste des rooms
+                const roomResponse = await fetch("/api/rooms")
+                const roomData =  await roomResponse.json();
+
+                // Récupère la liste des rooms du user actuel
+                const userResponse = await fetch("/api/users")
+                const userData =  await userResponse.json();
+                const curentUserRooms = userData.find((user: IUser) => String(user.username) === username)?.rooms;
+
+                // Afficher des rooms 
+                const listeRooms= document.getElementById("Rooms")
+
+                if(!curentUserRooms || curentUserRooms===undefined || curentUserRooms.length===0){
+                    listeRooms!.innerHTML="Vous avez rojoint aucune room"
+                }else if(curentUserRooms && curentUserRooms.length>0){
+                    const userRooms = roomData.filter((room: IRoom) => curentUserRooms.includes(room._id));
+                    const rooms = userRooms.map((room: IRoom) => ({ id: room._id, name: room.name }));
+
+                    listeRooms!.innerHTML=""
+                        for (const u of rooms){
+                        listeRooms!.innerHTML+="<li id='"+u.id+" '> \
+                        <a href='"+u.id+"?username="+ username+"'> "+u.name+"</a> \
+                        </li> ";
+
+                        if (pathnameId==u.id){
+                            const roomName = document.getElementById("roomName")
+                            if (roomName){
+                                roomName.innerHTML="<p>"+u.name+"</p>"
+                            }
+                            
+                        }
+                        
+                    }
+                }
+
+            }catch (error) {
+                 console.error("Error displaying current user's rooms:", error);
+
+            } finally {}
+    }
+
+
     // chat box
     
 
         // Pour le web socket 
          useEffect(() => {
 
+            // Affichage des rooms du user
+            fetchUserRooms() 
+
             // Renvoie les données si une personne réintialise la page 
             socket.emit('enLigne')
            
             // Affichage des users en ligne 
-            socket.on('onlineUsers',(connectedUsers,oldConnectedUsers)=>{
+            socket.on('onlineUsers',(connectedUsers)=>{
                 // console.log(`Users connectés : ${connectedUsers}`)
             
                 const br = document.createElement("br");
@@ -125,30 +181,30 @@ export default function Rooms() {
             })
 
             // Affichage des room disponibles
-            socket.on('rooms',(rooms)=>{
+            // socket.on('rooms',(rooms)=>{
             
-                const br = document.createElement("br");
-                const listeRooms= document.getElementById("Rooms")
-            
-                if (listeRooms){
-                    listeRooms.innerHTML=""
-                        for (const u of rooms){
-                        listeRooms.innerHTML+="<li id='"+u.id+" '> \
-                        <a href='"+u.id+"?username="+ username+"'> "+u.name+"</a> \
-                        </li> ";
-
-                        if (pathnameId==u.id){
-                            const roomName = document.getElementById("roomName")
-                            if (roomName){
-                                roomName.innerHTML="<p>"+u.name+"</p>"
-                            }
-                            
-                        }
-                        
-                    }
-                }
                 
-            })
+            //     const listeRooms= document.getElementById("Rooms")
+            
+            //     if (listeRooms){
+            //         listeRooms.innerHTML=""
+            //             for (const u of rooms){
+            //             listeRooms.innerHTML+="<li id='"+u.id+" '> \
+            //             <a href='"+u.id+"?username="+ username+"'> "+u.name+"</a> \
+            //             </li> ";
+
+            //             if (pathnameId==u.id){
+            //                 const roomName = document.getElementById("roomName")
+            //                 if (roomName){
+            //                     roomName.innerHTML="<p>"+u.name+"</p>"
+            //                 }
+                            
+            //             }
+                        
+            //         }
+            //     }
+                
+            // })
 
 
             socket.on('messageRoom', (msg,senderUsername) => {

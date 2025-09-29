@@ -98,7 +98,7 @@ app.prepare().then(() => {
     socket.on("enLigne", ()=>{
 
       setTimeout (()=>{
-      io.emit("onlineUsers",connectedUsers,oldConnectedUsers);
+      io.emit("onlineUsers",connectedUsers);
       },1200)
       
       // l'historique est renvoyé à chaque fois qu'un nouveau user se connecte
@@ -124,7 +124,7 @@ app.prepare().then(() => {
 
       oldConnectedUsers = connectedUsers
       connectedUsers = connectedUsers.filter(user => user !== currentUser);
-      io.emit("onlineUsers",connectedUsers,oldConnectedUsers);
+      io.emit("onlineUsers",connectedUsers);
 
       // mise à jour de la liste
       oldConnectedUsers= connectedUsers

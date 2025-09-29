@@ -3,7 +3,8 @@ Tâches à faire :
         -   Le user est renvoyé vers la page principale quand il est enregistré / connecté
     Le user doit être renvoyé vers la page login quand il n'est pas connecté 
 
-    Changer l'affichage des rooms de 'Rooms existantes' à 'Rooms lié au user'
+    Chaque nouveau user doit au moins avoir le room "General" 
+    
     Faire une redirection de page quand la nouvelle room est créé  
 
     Ajouter l'effet de chargement dans les autres parties du site
