@@ -107,9 +107,9 @@ app.prepare().then(() => {
       },1200)
 
       // J'envoie les Rooms chat disponible
-      setTimeout (()=>{
-        io.emit("rooms",rooms);
-      },1200)
+      // setTimeout (()=>{
+      //   io.emit("rooms",rooms);
+      // },1200)
     })
 
     // Supprime le nom du user de la liste quand il se déconnect

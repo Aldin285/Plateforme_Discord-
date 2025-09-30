@@ -5,6 +5,10 @@ Tâches à faire :
 
     Chaque nouveau user doit au moins avoir le room "General" 
     
+    Mettre l'ID de la room "General" comme room par défaut quand une personne se conecte et non id = 1
+
+    Enlevé les parties qui ne seront pas utilisées par Socket.io
+
     Faire une redirection de page quand la nouvelle room est créé  
 
     Ajouter l'effet de chargement dans les autres parties du site

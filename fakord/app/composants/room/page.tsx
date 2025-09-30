@@ -18,7 +18,7 @@ export default function Rooms() {
     // Pour avoir l'id du room actuel
     let pathname = usePathname()
     let pathnameSplit = pathname.split("/")
-    let pathnameId = pathnameSplit[pathnameSplit.length-1]
+    let currentRoomId = pathnameSplit[pathnameSplit.length-1]
 
  
     const searchParams = useSearchParams();
@@ -131,12 +131,9 @@ export default function Rooms() {
                         <a href='"+u.id+"?username="+ username+"'> "+u.name+"</a> \
                         </li> ";
 
-                        if (pathnameId==u.id){
+                        if (currentRoomId==u.id){
                             const roomName = document.getElementById("roomName")
-                            if (roomName){
-                                roomName.innerHTML="<p>"+u.name+"</p>"
-                            }
-                            
+                            roomName!.innerHTML="<p>"+u.name+"</p>"
                         }
                         
                     }
@@ -147,8 +144,92 @@ export default function Rooms() {
 
             } finally {}
     }
+    //    ------------------------------------------------------------------------------------------------------------------------------------------    
+        // Affichage de l'historique
+        async function DisplayChatHistory() {
+            try {
+                
+                // Récupère la liste des rooms du user actuel
+                const userResponse = await fetch("/api/users")
+                const userData =  await userResponse.json();
 
 
+               // Récupérer la liste des rooms
+                const roomResponse = await fetch("/api/rooms")
+                const roomData =  await roomResponse.json();
+                const roomMessages = roomData.find((room: IRoom) => room._id === currentRoomId)?.messages;
+               
+                
+                const messagerie = document.getElementById("Messagerie")
+                messagerie!.innerHTML=""
+                if(!roomMessages || roomMessages===undefined || roomMessages.length===0){
+                    messagerie!.innerHTML="Aucun message dans cette room"
+                }
+                else if(roomMessages && roomMessages.length>0){
+                    for (const m of roomMessages){
+
+                        const message = document.createElement("div");
+                        const senderUsername = userData.find((user: IUser) => String(user._id) === m.sender)?.username
+                        
+                        if ( senderUsername==username){
+                            message.classList.add("end");
+                        }
+                         // Partie message
+                        const messageBox = document.createElement("li");
+                        if ( senderUsername==username){
+                            messageBox.classList.add("myMessage");
+                        }else{
+                            messageBox.classList.add("othersMessage");
+                        }
+
+                        const message_text = document.createTextNode(m.content);
+                        
+                        messageBox.appendChild(message_text);
+
+                        // Partie user
+                            const usernameBox = document.createElement("div");
+                            usernameBox.innerHTML = `<p>${ senderUsername}</p>`;
+                            
+                            // Partie messagerie
+                            
+                            message.appendChild(usernameBox);
+                            message.appendChild(messageBox);
+                        
+                            messagerie?.appendChild(message);
+                    }
+                }
+            }catch (error) {
+                console.error("Error displaying current user's rooms:", error);
+            } finally {}
+    }
+//    ------------------------------------------------------------------------------------------------------------------------------------------    
+        // Envoie du message à la base de donnée
+         async function SaveMessage() {
+            try {
+                // Récupérer la liste des rooms
+                const roomResponse = await fetch("/api/rooms")
+                const roomData =  await roomResponse.json();
+
+                // Récupère la liste des rooms du user actuel
+                const userResponse = await fetch("/api/users")
+                const userData =  await userResponse.json();
+                const curentUser = userData.find((user: IUser) => String(user.username) === username);
+                if(!curentUser || curentUser===undefined) return;
+
+                await fetch("/api/messages", {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        sender: curentUser?._id,
+                        content: Message,
+                        roomId: currentRoomId,
+                        }),
+                 });
+
+            }catch (error) {
+                console.error("Error displaying current user's rooms:", error);
+            } finally {}
+        }            
     // chat box
     
 
@@ -157,6 +238,9 @@ export default function Rooms() {
 
             // Affichage des rooms du user
             fetchUserRooms() 
+
+            // Affichage des rooms du user
+            DisplayChatHistory()
 
             // Renvoie les données si une personne réintialise la page 
             socket.emit('enLigne')
@@ -193,7 +277,7 @@ export default function Rooms() {
             //             <a href='"+u.id+"?username="+ username+"'> "+u.name+"</a> \
             //             </li> ";
 
-            //             if (pathnameId==u.id){
+            //             if (currentRoomId==u.id){
             //                 const roomName = document.getElementById("roomName")
             //                 if (roomName){
             //                     roomName.innerHTML="<p>"+u.name+"</p>"
@@ -208,7 +292,7 @@ export default function Rooms() {
 
 
             socket.on('messageRoom', (msg,senderUsername) => {
-                console.log("Message reçu")
+                // console.log("Message reçu")
                 const messagerie = document.getElementById("Messagerie");
             
                 const br = document.createElement("br");
@@ -246,48 +330,48 @@ export default function Rooms() {
 
 
         // Partie historique 
-         socket.on('historique', (historique) => {
+        //  socket.on('historique', (historique) => {
 
-            const messagerie = document.getElementById("Messagerie");    
-                const br = document.createElement("br");
-                    if ( messagerie){
-                        messagerie.innerHTML=""
-                        for (const m of historique){
-                            // vérifie si on est dans le bon salon
-                            if(m.roomId==pathnameId){
-                                const message = document.createElement("div");
-                                if ( m.expediteur==username){
-                                    message.classList.add("end");
-                                }
-                                
+        //     const messagerie = document.getElementById("Messagerie");    
+        //         const br = document.createElement("br");
+                   
+        //             messagerie!.innerHTML=""
+        //             for (const m of historique){
+        //                 // vérifie si on est dans le bon salon
+        //                 if(m.roomId==currentRoomId){
+        //                     const message = document.createElement("div");
+        //                     if ( m.expediteur==username){
+        //                         message.classList.add("end");
+        //                     }
                             
-                                // Partie message
-                                const message_box = document.createElement("li");
-                                if ( m.expediteur==username){
-                                    message_box.classList.add("myMessage");
-                                }else{
-                                    message_box.classList.add("othersMessage");
-                                }
+                        
+        //                     // Partie message
+        //                     const message_box = document.createElement("li");
+        //                     if ( m.expediteur==username){
+        //                         message_box.classList.add("myMessage");
+        //                     }else{
+        //                         message_box.classList.add("othersMessage");
+        //                     }
+                        
+        //                     const message_text = document.createTextNode(m.contenue);
+                        
+        //                     message_box.appendChild(message_text);
                             
-                                const message_text = document.createTextNode(m.contenue);
+        //                     // Partie user
+        //                     const nom_user_box = document.createElement("div");
+        //                     nom_user_box.innerHTML = `<p>${ m.expediteur}</p>`;
                             
-                                message_box.appendChild(message_text);
-                                
-                                // Partie user
-                                const nom_user_box = document.createElement("div");
-                                nom_user_box.innerHTML = `<p>${ m.expediteur}</p>`;
-                                
-                                // Partie messagerie
-                                
-                                message.appendChild(nom_user_box);
-                                message.appendChild(message_box);
-                                message.appendChild(br);
+        //                     // Partie messagerie
                             
-                                messagerie?.appendChild(message);
-                            }
-                        }
-                }
-        });
+        //                     message.appendChild(nom_user_box);
+        //                     message.appendChild(message_box);
+        //                     message.appendChild(br);
+                        
+        //                     messagerie?.appendChild(message);
+        //                 }
+        //             }
+                
+        // });
 
 
         
@@ -303,8 +387,10 @@ export default function Rooms() {
     
         const sendMessage =()=>{
             // Crée un broadcast pour envoyer le message à tout les users connectés
-            socket.emit('messageRoom',Message,username,pathnameId)
+            socket.emit('messageRoom',Message,username,currentRoomId)
             SetMessage("")
+            // Message sauvegardé dans la BDD
+            SaveMessage()
     }
     
         return (
