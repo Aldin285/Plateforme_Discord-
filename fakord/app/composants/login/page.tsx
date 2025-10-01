@@ -9,7 +9,6 @@ import { useRouter } from 'next/navigation';
 
 export default function Login() {
 
-
 //  une autre méthode pour transférer une valeur dans d'autres pages 
 // ( ne marche que si chaque user utilise son propre navigateur )
   // localStorage.setItem("username",onlineUsername)
@@ -56,7 +55,7 @@ export default function Login() {
 
 
             // Renvoi vers la page de chat avec les données du user
-            router.push(`../../pages/room/1?${params}`);
+            router.push(`../../pages/room/${process.env.NEXT_PUBLIC_GENERAL_CHAT_ID}?${params}`);
           
         }
       }

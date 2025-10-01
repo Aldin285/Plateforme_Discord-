@@ -53,7 +53,7 @@ export default function Register() {
       }else{
         setWarningMsg("");
         
-        await fetch("/api/users",{
+        const newUser = await fetch("/api/users",{
           method: "POST",
           body: JSON.stringify({ 
               firstname: firstname,
@@ -68,17 +68,17 @@ export default function Register() {
       });
 
        const params = new URLSearchParams({
-                firstname,
-                lastname,
-                email,
                 username,
-                birthday,
-                gender
             }).toString();
 
-        // Renvoi vers la page de chat avec les données du user
-        router.push(`../../pages/room/1?${params}`);
-      }
+        // Renvoi vers la room General
+        if (!newUser.ok) {
+          const errorData = await newUser.json();
+          setWarningMsg(errorData.message || "Une erreur est survenue lors de la création du compte");
+          return;
+        }else{
+            router.push(`../../pages/room/${process.env.NEXT_PUBLIC_GENERAL_CHAT_ID}?${params}`);
+        }}
     }
 
     useEffect(()=>{

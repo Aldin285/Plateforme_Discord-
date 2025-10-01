@@ -1,11 +1,6 @@
 Tâches à faire :
     Enregistrement user :
-        -   Le user est renvoyé vers la page principale quand il est enregistré / connecté
-    Le user doit être renvoyé vers la page login quand il n'est pas connecté 
-
-    Chaque nouveau user doit au moins avoir le room "General" 
-    
-    Mettre l'ID de la room "General" comme room par défaut quand une personne se conecte et non id = 1
+        Le user doit être renvoyé vers la page login quand il n'est pas connecté 
 
     Enlevé les parties qui ne seront pas utilisées par Socket.io
 
@@ -13,7 +8,7 @@ Tâches à faire :
 
     Ajouter l'effet de chargement dans les autres parties du site
 
-    Gestion des erreurs coté serveur ( le faire à la fin car j'ignore comment pour le moment)
+    Gestion des erreurs coté serveur
 
 
 Problèmes rencontrés :
@@ -64,6 +59,11 @@ useEffect :
     Permet d'ajouter du contenu après la compilation de la page 
     (à utiliser avec getElementById pour qu'il détecte l'élément sélectionné).
 
+Le fichier .env.local : 
+    L'appel d'une variable env diffère entre le client et le serveur : 
+    -Serveur : il faudra importer "dotenv" et configurer le chemin (import dotenv from 'dotenv';dotenv.config({ path: '.env.local' });) 
+        pour pouvoir utiliser la variable (process.env.ENV_VAR)
+    -Client : il suffit juste d'ajouter "NEXT_PUBLIC"  avant la variable env pour pouvoir l'appeler dans un composants (process.env.NEXT_PUBLIC_ENV_VAR) 
 
 La différence entre node et nodemon dans package.json : 
     nodemone redémarre l'application à chaque fois qu'il y a un changement dans l'application
@@ -78,3 +78,4 @@ Mes sources :
 
     Pour preventDefault() : https://www.tutorialspoint.com/how-to-stop-refreshing-the-page-on-submit-in-javascript
                             https://stackoverflow.com/questions/61265736/parameter-e-implicitly-has-an-any-type-react-typescript
+    Gestion des erreurs :   https://nextjs.org/docs/app/getting-started/error-handling

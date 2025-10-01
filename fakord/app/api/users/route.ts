@@ -1,7 +1,13 @@
 import connectDB from "@/app/lib/mongo";
+
 import User from "@/app/model/user";
 import room from "@/app/model/room";
+
 import { NextResponse } from "next/server";
+import { ObjectId } from "mongodb";
+
+import dotenv from 'dotenv';
+dotenv.config({ path: '.env.local' });
 
 
 export async function GET() {
@@ -25,6 +31,9 @@ export async function POST(request: Request) {
     if (!firstname || !lastname || !birthday || !email || !password || !username || !gender){
       return NextResponse.json({ message: "All the fields are required" }, { status: 400 });
     }
+    if (!process.env.GENERAL_CHAT_ID) {
+  return NextResponse.json({ message: "GENERAL_CHAT_ID variable is missing" }, { status: 500 });  
+  }
 
     const newUser = await User.create({
       firstname,
@@ -32,7 +41,7 @@ export async function POST(request: Request) {
       email,
       password,
       username,
-      rooms:[],
+      rooms:[new ObjectId(process.env.GENERAL_CHAT_ID)],
       friends: [],
       birthday,
       gender,
