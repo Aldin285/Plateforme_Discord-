@@ -93,6 +93,7 @@ app.prepare().then(() => {
       oldConnectedUsers = connectedUsers
 
       io.emit("onlineUsers",connectedUsers);
+    })
 
     // Supprime le nom du user de la liste quand il se déconnect
     socket.on("disconnect",(reason)=>{
