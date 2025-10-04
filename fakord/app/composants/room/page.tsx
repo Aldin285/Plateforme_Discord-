@@ -15,6 +15,9 @@ import { IRoom } from '@/app/model/room';
 
 
 export default function Rooms() {
+
+     const router = useRouter();
+
     // Pour avoir l'id du room actuel
     let pathname = usePathname()
     let pathnameSplit = pathname.split("/")
@@ -26,7 +29,6 @@ export default function Rooms() {
 
     // const username = localStorage.getItem("username")
      const username = searchParams.get("username")
-
 
     //  ------------------------------------------------------------------------------------------------------------------------------------------
     // Message d'erreur pour la création d'une room
@@ -163,9 +165,11 @@ export default function Rooms() {
                 const messagerie = document.getElementById("Messagerie")
                 messagerie!.innerHTML=""
                 if(!roomMessages || roomMessages===undefined || roomMessages.length===0){
+                    messagerie!.classList.add("text-center")
                     messagerie!.innerHTML="Aucun message dans cette room"
                 }
                 else if(roomMessages && roomMessages.length>0){
+                    messagerie!.classList.remove("text-center")
                     for (const m of roomMessages){
 
                         const message = document.createElement("div");
@@ -206,10 +210,6 @@ export default function Rooms() {
         // Envoie du message à la base de donnée
          async function SaveMessage() {
             try {
-                // Récupérer la liste des rooms
-                const roomResponse = await fetch("/api/rooms")
-                const roomData =  await roomResponse.json();
-
                 // Récupère la liste des rooms du user actuel
                 const userResponse = await fetch("/api/users")
                 const userData =  await userResponse.json();
@@ -229,11 +229,52 @@ export default function Rooms() {
             }catch (error) {
                 console.error("Error displaying current user's rooms:", error);
             } finally {}
-        }            
-    // chat box
-    
+        }
+
+    //    ------------------------------------------------------------------------------------------------------------------------------------------    
+        // Vérification du username et de l'ID de la room
+        async function StatusCheck() {
+            try {
+
+                const userResponse = await fetch("/api/users")
+                const userData =  await userResponse.json();
+                const userCheck = userData.find((user: IUser) => String(user.username) === username);
+
+                // Récupérer la liste des rooms
+                const roomResponse = await fetch("/api/rooms")
+                const roomData =  await roomResponse.json();
+                const roomCheck = roomData.find((room: IRoom) => room._id === currentRoomId);
+
+                if(!userCheck || userCheck===undefined || !roomCheck || roomCheck===undefined){
+                    router.push("../../")
+                }else {
+                console.log("Status check passed");
+                // Renvoie les données si une personne réintialise la page 
+                socket.emit('enLigne',username,currentRoomId)
+            }
+            }
+            catch (error) {
+                console.error("Error displaying current user's rooms:", error);
+            } finally {}
+        }
+    //    -------------------------------------------------------------------------------------------------------------------------------------------
+        
+        const sendMessage =()=>{
+            // Crée un broadcast pour envoyer le message à tout les users connectés
+            socket.emit('messageRoom',Message,username,currentRoomId)
+            SetMessage("")
+            // Message sauvegardé dans la BDD
+            SaveMessage()
+    }
+     //    -------------------------------------------------------------------------------------------------------------------------------------------
+     
 
         // Pour le web socket 
+         useEffect(() => {
+            // Vérification du username et de l'ID de la room
+            StatusCheck()
+         },[])
+
          useEffect(() => {
 
             // Affichage des rooms du user
@@ -241,9 +282,6 @@ export default function Rooms() {
 
             // Affichage des rooms du user
             DisplayChatHistory()
-
-            // Renvoie les données si une personne réintialise la page 
-            socket.emit('enLigne')
            
             // Affichage des users en ligne 
             socket.on('onlineUsers',(connectedUsers)=>{
@@ -263,32 +301,6 @@ export default function Rooms() {
                 
                 
             })
-
-            // Affichage des room disponibles
-            // socket.on('rooms',(rooms)=>{
-            
-                
-            //     const listeRooms= document.getElementById("Rooms")
-            
-            //     if (listeRooms){
-            //         listeRooms.innerHTML=""
-            //             for (const u of rooms){
-            //             listeRooms.innerHTML+="<li id='"+u.id+" '> \
-            //             <a href='"+u.id+"?username="+ username+"'> "+u.name+"</a> \
-            //             </li> ";
-
-            //             if (currentRoomId==u.id){
-            //                 const roomName = document.getElementById("roomName")
-            //                 if (roomName){
-            //                     roomName.innerHTML="<p>"+u.name+"</p>"
-            //                 }
-                            
-            //             }
-                        
-            //         }
-            //     }
-                
-            // })
 
 
             socket.on('messageRoom', (msg,senderUsername) => {
@@ -327,54 +339,6 @@ export default function Rooms() {
             
                 messagerie?.appendChild(message);
         });
-
-
-        // Partie historique 
-        //  socket.on('historique', (historique) => {
-
-        //     const messagerie = document.getElementById("Messagerie");    
-        //         const br = document.createElement("br");
-                   
-        //             messagerie!.innerHTML=""
-        //             for (const m of historique){
-        //                 // vérifie si on est dans le bon salon
-        //                 if(m.roomId==currentRoomId){
-        //                     const message = document.createElement("div");
-        //                     if ( m.expediteur==username){
-        //                         message.classList.add("end");
-        //                     }
-                            
-                        
-        //                     // Partie message
-        //                     const message_box = document.createElement("li");
-        //                     if ( m.expediteur==username){
-        //                         message_box.classList.add("myMessage");
-        //                     }else{
-        //                         message_box.classList.add("othersMessage");
-        //                     }
-                        
-        //                     const message_text = document.createTextNode(m.contenue);
-                        
-        //                     message_box.appendChild(message_text);
-                            
-        //                     // Partie user
-        //                     const nom_user_box = document.createElement("div");
-        //                     nom_user_box.innerHTML = `<p>${ m.expediteur}</p>`;
-                            
-        //                     // Partie messagerie
-                            
-        //                     message.appendChild(nom_user_box);
-        //                     message.appendChild(message_box);
-        //                     message.appendChild(br);
-                        
-        //                     messagerie?.appendChild(message);
-        //                 }
-        //             }
-                
-        // });
-
-
-        
         
         return () => {
             // pour éviter les fuites de données et éviter de répéter une action deux fois ou plus (ajouter de le nom d'un user connecté)
@@ -384,15 +348,6 @@ export default function Rooms() {
         };
         }, []);
 
-    
-        const sendMessage =()=>{
-            // Crée un broadcast pour envoyer le message à tout les users connectés
-            socket.emit('messageRoom',Message,username,currentRoomId)
-            SetMessage("")
-            // Message sauvegardé dans la BDD
-            SaveMessage()
-    }
-    
         return (
             <>
             <div className="flex flex-row justify-between items-start w-full p-3 gap-8">

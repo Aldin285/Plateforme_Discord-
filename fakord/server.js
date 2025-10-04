@@ -26,15 +26,10 @@ app.prepare().then(() => {
 });
 
 
-  // Pour stocker les messages envoyés 
-  // ne pas mettre cette variable dans le io.on("connection") sinon chaque utilisateur aura son propre historique
-  const historique = []
   let connectedUsers = []
 
 
-  let rooms = [{id:1,name:"General"},
-      {id:2,name:"Room 1"}
-    ]
+  // let rooms = [{id:1,name:"General"},{id:2,name:"Room 1"}]
   
   let oldConnectedUsers
 
@@ -48,30 +43,22 @@ app.prepare().then(() => {
     console.log("Session ID :  : "+socket.id);
     console.log("-----------------------------" )
 
-    if (socket.recovered) {
-        console.log("-----------------------------" )
-        console.log(`la session est récupéré`);
-         console.log("-----------------------------" )
-    }else {
-        console.log("-----------------------------" )
-        console.log("La session précédente est perdu")
-        console.log("-----------------------------" )
-    }
+    // if (socket.recovered) {
+    //     console.log("-----------------------------" )
+    //     console.log(`la session est récupéré`);
+    //      console.log("-----------------------------" )
+    // }else {
+    //     console.log("-----------------------------" )
+    //     console.log("La session précédente est perdu")
+    //     console.log("-----------------------------" )
+    // }
 
     // Page room
     socket.on("messageRoom", (msg,user,roomId) => {
       // Rejoindre le chat room
-      socket.join(roomId)
       console.log("-----------------------------" )
       console.log("Votre message est : "+msg);
       console.log("-----------------------------" )
-
-      // Envoi les messages dans une liste pour les récupérer après
-      historique.push({expediteur:user,contenue:msg,roomId:roomId})
-
-      // console.log("-----------------------------" )
-      // console.log(historique)
-      // console.log("-----------------------------" )
       
       io.to(roomId).emit("messageRoom", msg,user);
     });
@@ -82,9 +69,6 @@ app.prepare().then(() => {
       console.log("New User: "+username);
       console.log("-----------------------------" )
       currentUser=username
-
-      // enregistre le nom du user dans la session
-      socket.data.username= currentUser
       
       // Envoi le nom du nouveau user dans la liste ( s'il n'est pas deja pris )
       if(!connectedUsers.includes(username)){
@@ -95,25 +79,23 @@ app.prepare().then(() => {
     });
     
     // Renvoie les infos quand quelqu'un visite une page
-    socket.on("enLigne", ()=>{
+    socket.on("enLigne", (username,roomId)=>{
 
-      setTimeout (()=>{
+      // Rejoindre le chat room
+      socket.join(roomId)
+
+      currentUser=username
+
+      if(!connectedUsers.includes(username)){
+        connectedUsers.push(username)
+      } 
+
+      oldConnectedUsers = connectedUsers
+
       io.emit("onlineUsers",connectedUsers);
-      },1200)
-      
-      // l'historique est renvoyé à chaque fois qu'un nouveau user se connecte
-      setTimeout (()=>{
-      io.emit("historique",historique)
-      },1200)
-
-      // J'envoie les Rooms chat disponible
-      // setTimeout (()=>{
-      //   io.emit("rooms",rooms);
-      // },1200)
-    })
 
     // Supprime le nom du user de la liste quand il se déconnect
-    socket.on("disconnect",(reason,details)=>{
+    socket.on("disconnect",(reason)=>{
       console.log("-----------------------------" )
       console.log("Cause de deconnexion :"+ reason)
       console.log("-----------------------------" )

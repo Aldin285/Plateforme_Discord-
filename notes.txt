@@ -10,6 +10,10 @@ Tâches à faire :
 
     Gestion des erreurs coté serveur
 
+    voir toutes les rooms et users disponibles
+
+    ne pas laisser deux users ayant le meme compte connecté en meme temps
+
 
 Problèmes rencontrés :
 input qui sort du cadre quand la page rétrécie 

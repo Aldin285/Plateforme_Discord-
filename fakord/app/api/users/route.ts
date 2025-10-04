@@ -1,7 +1,6 @@
 import connectDB from "@/app/lib/mongo";
 
 import User from "@/app/model/user";
-import room from "@/app/model/room";
 
 import { NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
