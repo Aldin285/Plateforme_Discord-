@@ -71,7 +71,7 @@ export default function Register() {
                 username,
             }).toString();
 
-        // Renvoi vers la room General
+        // Renvoi vers la room General quand il y a aucune erreur
         if (!newUser.ok) {
           const errorData = await newUser.json();
           setWarningMsg(errorData.message || "Une erreur est survenue lors de la création du compte");

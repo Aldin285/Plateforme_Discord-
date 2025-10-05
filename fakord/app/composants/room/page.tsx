@@ -1,7 +1,7 @@
 'use client'
 
 // import { NextPage } from 'next'
-import React,{ useState,useEffect } from "react";
+import React,{ createContext, useState,useEffect, useContext } from "react";
 import { useRouter } from 'next/navigation'
 
 import { useSearchParams,usePathname } from "next/navigation";
@@ -13,10 +13,9 @@ import { IUser } from '@/app/model/user';
 import { IRoom } from '@/app/model/room';
 
 
-
 export default function Rooms() {
 
-     const router = useRouter();
+    const router = useRouter();
 
     // Pour avoir l'id du room actuel
     let pathname = usePathname()
@@ -44,6 +43,7 @@ export default function Rooms() {
      function NewRoomDisplaySwitch(){
         SetNewRoomDisplay(!newRoomDisplay)   
     }
+
 
     // Fonction ajout room
     async function AddRoom(event: React.FormEvent<HTMLFormElement>) {
@@ -80,18 +80,26 @@ export default function Rooms() {
               }),
               headers: {'Content-Type': 'application/json'}
           });
-          
-        //   Attendre que la room soit créé pour pouvoir utiliser son ID
-          const createdRoom = await postResponse.json();
 
-          await fetch("/api/users", {
+
+          if (!postResponse.ok) {
+            const errorData = await postResponse.json();
+            setWarningMsg(errorData.message || "Une erreur est survenue lors de la création de la room");
+            return;
+          }else{
+        //   Attendre que la room soit créé pour pouvoir utiliser son ID
+            const createdRoom = await postResponse.json();
+
+            await fetch("/api/users", {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 userId: currentUser?._id,
                 newRoomId: createdRoom._id,
                 }),
-         });
+            });
+
+        }
           
           }
         }catch (error) {
@@ -119,17 +127,18 @@ export default function Rooms() {
                 const curentUserRooms = userData.find((user: IUser) => String(user.username) === username)?.rooms;
 
                 // Afficher des rooms 
-                const listeRooms= document.getElementById("Rooms")
+                const usersRooms= document.getElementById("Rooms")
 
                 if(!curentUserRooms || curentUserRooms===undefined || curentUserRooms.length===0){
-                    listeRooms!.innerHTML="Vous avez rojoint aucune room"
+                    usersRooms!.innerHTML="Vous avez rojoint aucune room"
                 }else if(curentUserRooms && curentUserRooms.length>0){
                     const userRooms = roomData.filter((room: IRoom) => curentUserRooms.includes(room._id));
                     const rooms = userRooms.map((room: IRoom) => ({ id: room._id, name: room.name }));
-
-                    listeRooms!.innerHTML=""
+                 
+                        usersRooms!.innerHTML = "";
+                   
                         for (const u of rooms){
-                        listeRooms!.innerHTML+="<li id='"+u.id+" '> \
+                        usersRooms!.innerHTML+="<li id='"+u.id+" '> \
                         <a href='"+u.id+"?username="+ username+"'> "+u.name+"</a> \
                         </li> ";
 
@@ -267,7 +276,7 @@ export default function Rooms() {
             SaveMessage()
     }
      //    -------------------------------------------------------------------------------------------------------------------------------------------
-     
+
 
         // Pour le web socket 
          useEffect(() => {
@@ -375,9 +384,9 @@ export default function Rooms() {
                     <p className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-300 w-20 mb-1.5 animate-pulse"></p>
                     </div>
 
-                    <ul className="list-none bg-blue-300 border-amber-100 rounded-4xl border-2 size-lvw p-3 w-full min-h-[300px] max-h-[500px] overflow-y-auto scrollbar-hide " id="Messagerie">
                     {/* Messages */}
-                    </ul>  
+                    <ul className="list-none bg-blue-300 border-amber-100 rounded-4xl border-2 size-lvw p-3 w-full min-h-[300px] max-h-[500px] overflow-y-auto scrollbar-hide"
+                     id="Messagerie"></ul>  
 
                     {/* Message Input*/}
                     <div className="flex flex-row items-center justify-center w-full mt-4 gap-x-3">
@@ -407,6 +416,7 @@ export default function Rooms() {
 
                 {/* Partie création room */}
 
+                {/* Affiche un arrière-plan noir et transparant */}
                 {newRoomDisplay && (
                 <div className="fixed inset-0 bg-black/40 z-98"></div>
                 )}

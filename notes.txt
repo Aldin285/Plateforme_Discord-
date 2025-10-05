@@ -14,6 +14,9 @@ Tâches à faire :
 
     ne pas laisser deux users ayant le meme compte connecté en meme temps
 
+    Ajouter la fonction rejoindre une room
+
+    Utiliser useContexte pour la connexion d'un user au lieu de useSearchParams
 
 Problèmes rencontrés :
 input qui sort du cadre quand la page rétrécie 

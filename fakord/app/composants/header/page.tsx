@@ -7,8 +7,14 @@ import { FaPlay } from "react-icons/fa";
 
 import { useState, useRef, useEffect } from 'react'
 
+import { useRooms } from '@/app/composants/roomsDisplay/page';
+
+
 
 export default function Header() {
+
+    const {roomsSwitch, roomsDisplaySwitch} = useRooms();
+    
     // Music
     const [currentMusic,setcurrentMusic] = useState('Snowy')
 
@@ -91,7 +97,7 @@ export default function Header() {
                             <a href="./../../" className="block py-2 pr-4 pl-3 text-white rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white" aria-current="page">Home</a>
                         </li>
                         <li>
-                            <a href="" className="block py-2 pr-4 pl-3 text-white rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white" aria-current="page">Lien 2</a>
+                            <p onClick={roomsDisplaySwitch} className="block py-2 pr-4 pl-3 text-white rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white cursor-pointer" aria-current="page">Rooms</p>
                         </li>  
                        
                         {/* <li>
