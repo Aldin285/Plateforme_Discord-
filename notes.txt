@@ -18,6 +18,8 @@ Tâches à faire :
 
     Utiliser useContexte pour la connexion d'un user au lieu de useSearchParams
 
+    utiliser une variable partagé qui fetch les api des rooms et des users
+
 Problèmes rencontrés :
 input qui sort du cadre quand la page rétrécie 
 Le nom de l'utilisateur connecté qui disparait quand on change de page dans la liste des users connectés

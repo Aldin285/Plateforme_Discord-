@@ -31,6 +31,8 @@ import { IRoom } from '@/app/model/room';
 
         const [warningMsg, setWarningMsg] = useState('');
 
+        const[rooms, setRooms] = useState<IRoom[]>([]);
+
         const [roomsSwitch, setRoomsSwitch] = useState(false);
 
         //    ------------------------------------------------------------------------------------------------------------------------------------------
@@ -43,25 +45,16 @@ import { IRoom } from '@/app/model/room';
             
             const allRooms = roomData.map((room: IRoom) => ({ id: room._id, name: room.name }));
 
-            const roomsDisplay = document.getElementById("RoomsDisplay");
+            setRooms(allRooms); 
 
-            roomsDisplay!.innerHTML = "";
+            if(rooms.length===0 || rooms==undefined || !rooms){
+                setWarningMsg("Aucune room disponible pour le moment")
+            }
 
-            if (allRooms.length === 0) {
-                roomsDisplay!.innerHTML = "<p>Aucune room disponible pour le moment</p>";
+            if (!roomResponse.ok) {
+                console.error("Failed to fetch rooms:", roomResponse.statusText);
+                setWarningMsg("Erreur lors de la récupération des rooms")
                 return;
-            }else{
-                for(const u of allRooms) {
-                    const listItem = document.createElement("li");
-                    listItem.className = "mb-2 p-2 rounded-lg shadow-md hover:bg-emerald-800";
-                    listItem.innerHTML = `
-                        <div class="flex justify-between items-center ">
-                            <span class="font-medium">${u.name}</span>
-                            <button data-room-id="${u.id}" class="joinRoomButton bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded-full cursor-pointer">Join</button>
-                        </div>
-                    `;
-                    roomsDisplay!.appendChild(listItem);
-                };
             }
 
 
@@ -97,9 +90,26 @@ import { IRoom } from '@/app/model/room';
                 <div className={`absolute top-1/3 left-4/10 ${roomsSwitch?"" : "hidden"} z-99 flex flex-col items-center gap-y-5  bg-emerald-700 p-3 rounded-2xl text-nowrap text-center`}>
                         <h1>Rooms</h1>
 
-                    <ul className="list-none  w-auto size-auto p-3  rounded-2xl " id="RoomsDisplay">
-                        <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-300 w-20 mb-1.5 animate-pulse"></div>
-                        <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-300 w-30 mb-1.5 animate-pulse"></div>
+                    <ul className="list-none  w-auto size-auto p-3  rounded-2xl ">
+                       {rooms.length === 0 ? (
+                        <p>Aucune room disponible pour le moment</p>
+                       ) : (
+                        rooms.map((room) => (
+                            <li key={room.id} className="mb-2 p-2 rounded-lg shadow-md hover:bg-emerald-800">
+                                <div className="flex justify-between items-center ">
+                                    <span className="font-medium">{room.name}</span>
+                                    <button
+                                        onClick={() => {
+                                            router.push(`/room/${room.id}?username=${searchParams.get("username")}`);
+                                            setRoomsSwitch(false);
+                                        }}
+                                        className="joinRoomButton bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded-full cursor-pointer"
+                                    >Join</button>
+                                </div>
+                            </li>
+                        ))
+                       )}
+                       <p className= {`text-red-500 w-fit ${ warningMsg === ""? "hidden" : "py-5" } `}  id="warning">{warningMsg}</p> 
                     </ul>
 
                     <button onClick={()=>setRoomsSwitch(false)} type="button" className="bg-red-300 hover:bg-red-400 text-black border-solid w-fit rounded-3xl p-2 cursor-pointer">Back</button>

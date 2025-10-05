@@ -1,7 +1,7 @@
 'use client'
 
 // import { NextPage } from 'next'
-import React,{ createContext, useState,useEffect, useContext } from "react";
+import React,{ createContext, useState,useEffect, useContext, useRef } from "react";
 import { useRouter } from 'next/navigation'
 
 import { useSearchParams,usePathname } from "next/navigation";
@@ -10,7 +10,10 @@ import {socket} from "../../../socket"
 
 
 import { IUser } from '@/app/model/user';
-import { IRoom } from '@/app/model/room';
+import room, { IRoom } from '@/app/model/room';
+import { IMessage } from '@/app/model/message';
+
+import { set } from "mongoose";
 
 
 export default function Rooms() {
@@ -38,6 +41,19 @@ export default function Rooms() {
 
     //  Sasie de nom room 
      const [newRoomName, SetNewRoomName] = useState('');
+
+    // Liste des rooms du user
+     const [userRooms,SetUserRooms] = useState<IRoom[]>([])
+     const [loadingUserRooms,SetLoadingUserRooms] = useState(true)
+     const [loadingUserRoomsMessage,SetLoadingUserRoomsMessage] = useState("Vous n'avez rejoint aucune room ")
+
+
+    // Affichage de l'historique
+    const [chatHistory,SetChatHistory] = useState<IMessage[]>([])
+    const [loadingChatHistory,SetLoadingChatHistory] = useState(true)
+    const [chatHistoryMessage,SetChatHistoryMessage] = useState("Vous avez saisi aucun message dans cette room ")
+    // pour scroller automatiquement vers le bas
+    const messagesEndRef = useRef<HTMLUListElement>(null);
 
     // Fonction affichage menu creation room
      function NewRoomDisplaySwitch(){
@@ -125,31 +141,26 @@ export default function Rooms() {
                 const userResponse = await fetch("/api/users")
                 const userData =  await userResponse.json();
                 const curentUserRooms = userData.find((user: IUser) => String(user.username) === username)?.rooms;
-
-                // Afficher des rooms 
-                const usersRooms= document.getElementById("Rooms")
-
-                if(!curentUserRooms || curentUserRooms===undefined || curentUserRooms.length===0){
-                    usersRooms!.innerHTML="Vous avez rojoint aucune room"
-                }else if(curentUserRooms && curentUserRooms.length>0){
-                    const userRooms = roomData.filter((room: IRoom) => curentUserRooms.includes(room._id));
-                    const rooms = userRooms.map((room: IRoom) => ({ id: room._id, name: room.name }));
+                
+                const userRooms = roomData.filter((room: IRoom) => curentUserRooms.includes(room._id));
+                const rooms = userRooms.map((room: IRoom) => ({ id: room._id, name: room.name }));
                  
-                        usersRooms!.innerHTML = "";
-                   
-                        for (const u of rooms){
-                        usersRooms!.innerHTML+="<li id='"+u.id+" '> \
-                        <a href='"+u.id+"?username="+ username+"'> "+u.name+"</a> \
-                        </li> ";
+                SetUserRooms(rooms)
 
-                        if (currentRoomId==u.id){
-                            const roomName = document.getElementById("roomName")
-                            roomName!.innerHTML="<p>"+u.name+"</p>"
-                        }
-                        
-                    }
+                if(!roomResponse.ok || !userResponse.ok) {
+                    console.error("Failed to fetch rooms or users");
+                    SetLoadingUserRoomsMessage("Erreur lors de l'affichage de vos rooms. Veiller vous reconnecter")
+                    // Un délai pour faire un effet de chargement quand les données ne sont pas encore disponibles
+                    setTimeout(() => {
+                        SetLoadingUserRooms(false)
+                     }, 1000);
+                 
+                    return;
+                }else{
+                    setTimeout(() => {
+                        SetLoadingUserRooms(false)
+                    }, 1000);
                 }
-
             }catch (error) {
                  console.error("Error displaying current user's rooms:", error);
 
@@ -169,48 +180,32 @@ export default function Rooms() {
                 const roomResponse = await fetch("/api/rooms")
                 const roomData =  await roomResponse.json();
                 const roomMessages = roomData.find((room: IRoom) => room._id === currentRoomId)?.messages;
-               
                 
-                const messagerie = document.getElementById("Messagerie")
-                messagerie!.innerHTML=""
-                if(!roomMessages || roomMessages===undefined || roomMessages.length===0){
-                    messagerie!.classList.add("text-center")
-                    messagerie!.innerHTML="Aucun message dans cette room"
-                }
-                else if(roomMessages && roomMessages.length>0){
-                    messagerie!.classList.remove("text-center")
-                    for (const m of roomMessages){
-
-                        const message = document.createElement("div");
-                        const senderUsername = userData.find((user: IUser) => String(user._id) === m.sender)?.username
-                        
-                        if ( senderUsername==username){
-                            message.classList.add("end");
-                        }
-                         // Partie message
-                        const messageBox = document.createElement("li");
-                        if ( senderUsername==username){
-                            messageBox.classList.add("myMessage");
-                        }else{
-                            messageBox.classList.add("othersMessage");
-                        }
-
-                        const message_text = document.createTextNode(m.content);
-                        
-                        messageBox.appendChild(message_text);
-
-                        // Partie user
-                            const usernameBox = document.createElement("div");
-                            usernameBox.innerHTML = `<p>${ senderUsername}</p>`;
-                            
-                            // Partie messagerie
-                            
-                            message.appendChild(usernameBox);
-                            message.appendChild(messageBox);
-                        
-                            messagerie?.appendChild(message);
+                const roomMessagesData = roomMessages.map((message: IMessage) =>({id: message._id, sender : String(message.sender), content : message.content} ))
+              
+                roomMessagesData.forEach((u: any) => {
+                    const findUser = userData.find((user: IUser) => user._id === u.sender);
+                    if(findUser){
+                        u.sender = findUser.username
+                    }else{
+                        u.sender = "Deleted User"
                     }
+                });
+                SetChatHistory(roomMessagesData)
+
+                if(!roomResponse.ok || !userResponse.ok) {
+                    console.error("Failed to fetch rooms or users");
+                    SetChatHistoryMessage("Erreur lors de l'affichage de l'historique des messages. Veiller vous reconnecter")
+                    setTimeout(() => {
+                        SetLoadingChatHistory(false)
+                     }, 2000);
+                     return
+                }else{
+                    setTimeout(() => {
+                        SetLoadingChatHistory(false)
+                     }, 2000);
                 }
+                
             }catch (error) {
                 console.error("Error displaying current user's rooms:", error);
             } finally {}
@@ -278,11 +273,19 @@ export default function Rooms() {
      //    -------------------------------------------------------------------------------------------------------------------------------------------
 
 
-        // Pour le web socket 
+        
+        // Vérification du username et de l'ID de la room
          useEffect(() => {
-            // Vérification du username et de l'ID de la room
             StatusCheck()
          },[])
+
+        // Pour scroller automatiquement vers le bas quand on se connecte
+        // Normalement ça redérige vers le bas à chaque nouveau message mais ça ne marche pas
+         useEffect(() => {
+            if (messagesEndRef.current) {
+                messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight;
+            }
+        }, [chatHistory]);
 
          useEffect(() => {
 
@@ -365,8 +368,30 @@ export default function Rooms() {
                 <div className="flex flex-col items-start min-w-[180px]">
                     <h2 className="font-bold mb-2">Rooms</h2>
                     <ul className="list-none  border-amber-100  border-2 w-auto size-auto p-3  rounded-2xl bg-blue-300" id="Rooms">
-                        <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-300 w-20 mb-1.5 animate-pulse"></div>
-                        <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-300 w-30 mb-1.5 animate-pulse"></div>
+
+                        {/*Quand les données ne sont pas encore chargées ou s'il y a eu une erreur*/}
+                        {userRooms.length === 0 || !userRooms || userRooms==undefined ? (
+
+                            // Effet de chargement
+                            loadingUserRooms ?(
+                                 <>
+                                    <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-300 w-20 mb-1.5 animate-pulse"></div>
+                                    <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-300 w-30 mb-1.5 animate-pulse"></div>
+                                 </>
+                                 
+                            ) :
+                            // Message qui change selon le cas
+                                (<p>{loadingUserRoomsMessage}</p>)
+                            
+                        ) : (
+                            // Affichage des rooms
+                            userRooms.map((room) => (
+                                <li key={room.id} id={room.id}>
+                                    <a href={room.id + "?username=" + username}> {room.name}</a>
+                                </li>
+                            ))
+                        )}
+
                     </ul>
 
                     <div className="pt-3"> 
@@ -381,12 +406,67 @@ export default function Rooms() {
                 {/* Current room title*/}
                 <div className=" flex flex-col items-center flex-1 max-w-2xl">
                     <div id="roomName" className="mb-2">
-                    <p className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-300 w-20 mb-1.5 animate-pulse"></p>
-                    </div>
+                        {loadingUserRooms ?(
+                            <p className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-300 w-20 mb-1.5 animate-pulse"></p>
+                        ) :(
+                            <p>{userRooms.find((room) => room.id === currentRoomId)?.name || "Room inconnue"}</p>
+                        )}
+                 
+                        </div>
 
-                    {/* Messages */}
-                    <ul className="list-none bg-blue-300 border-amber-100 rounded-4xl border-2 size-lvw p-3 w-full min-h-[300px] max-h-[500px] overflow-y-auto scrollbar-hide"
-                     id="Messagerie"></ul>  
+                    {/* Chat history */}
+                    <ul ref={messagesEndRef} className="list-none bg-blue-300 border-amber-100 rounded-4xl border-2 size-lvw p-3 w-full min-h-[300px] max-h-[500px] overflow-y-auto scrollbar-hide" id="Messagerie">
+                        {!chatHistory || chatHistory===undefined || chatHistory.length===0 ? (
+                        
+                            loadingChatHistory ?(
+                                <>
+                                {/* Effet de chargement */}
+                                <div className="pt-10 gap-y-3 flex flex-col justify-end">
+
+                                   <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-300 w-20 mb-1.5 animate-pulse"></div>
+                                   <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-300 w-30 mb-1.5 animate-pulse"></div>
+
+                                    <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-300 w-40 mb-1.5 animate-pulse end"></div>
+
+                                    <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-300 w-10 mb-1.5 animate-pulse"></div>
+
+                                    <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-300 w-15 mb-1.5 animate-pulse end"></div>
+                                    <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-300 w-8 mb-1.5 animate-pulse end"></div>
+
+
+                                    <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-300 w-30 mb-1.5 animate-pulse"></div>
+                                   <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-300 w-20 mb-1.5 animate-pulse"></div>
+
+                                    <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-300 w-37 mb-1.5 animate-pulse end"></div>
+
+                                    <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-300 w-17 mb-1.5 animate-pulse"></div>
+
+                                    <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-300 w-21 mb-1.5 animate-pulse end"></div>
+                                    <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-300 w-7 mb-1.5 animate-pulse end"></div>
+
+                                    
+                                </div>
+                                </>
+                            ) :
+                                // Message qui change selon le cas
+                                (<p>{chatHistoryMessage}</p>)
+                            ) : (
+                                chatHistory.map((message) => (
+                                <div key={message.id} className={ String(message.sender)===username ? "end" : "" }>
+                                    
+                                    <div>
+                                        <p>{String(message.sender)}</p>
+                                    </div>
+
+                                    <div>
+                                        <li className={ String(message.sender)===username ? "myMessage" : "othersMessage" }>{message.content}</li>
+                                    </div>
+                             
+                                </div>
+                             )
+                            )
+                        )}
+                    </ul>  
 
                     {/* Message Input*/}
                     <div className="flex flex-row items-center justify-center w-full mt-4 gap-x-3">
